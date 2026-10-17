@@ -77,7 +77,7 @@ npm run dev
 | `CRON_SECRET` | any long random string; also stored as a GitHub Actions secret |
 | `BUILDER_EMAIL` | the account allowed to use "Generate next edition now" |
 | `NEXT_PUBLIC_SITE_URL` | `http://localhost:3000` locally, or the Vercel URL |
-| `RESEND_API_KEY`, `EMAIL_FROM` | Optional Resend API key and verified sender for daily email delivery |
+| `RESEND_API_KEY`, `EMAIL_FROM` | Optional Resend API key and verified sender for daily email delivery; use `Margins <paper@your-verified-domain.com>` for `EMAIL_FROM` |
 
 3. Optionally run `npm run rls-check` to verify reader isolation.
 

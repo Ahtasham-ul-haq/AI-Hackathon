@@ -5,7 +5,7 @@ import { loadPaper } from "@/lib/papers";
 /** Send one edition through Resend, with a database claim to avoid duplicate sends. */
 export async function deliverPaper(userId: string, paperId: string) {
   const apiKey = process.env.RESEND_API_KEY;
-  const from = process.env.EMAIL_FROM;
+  const from = process.env.EMAIL_FROM?.trim();
   if (!apiKey || !from) return "email provider is not configured";
   const db = createServiceClient();
   const { data: profile } = await db.from("profiles").select("email, email_delivery").eq("id", userId).single();
