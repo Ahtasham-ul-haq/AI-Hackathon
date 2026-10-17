@@ -12,6 +12,7 @@ import { LANGUAGE_NAME } from "@/lib/preferences";
 export type Trigger = "onboarding" | "hourly" | "visit" | "builder";
 
 const STALE_RUN_MS = 3 * 60 * 1000;
+const NEWS_BUDGET_MS = 15_000;
 const LENGTH = { short: [10, 12], standard: [15, 20], long: [22, 25] } as const;
 
 type Weight = { topic: string; subtopic: string; label: string; weight: number };
@@ -345,7 +346,10 @@ export async function generatePaperForReader(userId: string, trigger: Trigger): 
       .map((w) => ({ topic: w.topic, label: w.label }));
 
     const prefs = { topics, subtopics, language: profile.language, region: profile.region };
-    await refreshNews(db, prefs);
+    const t0 = Date.now();
+    // Don't let slow feeds hold up the paper: use what's cached after 15s; the rest keeps loading.
+    await Promise.race([refreshNews(db, prefs), new Promise((r) => setTimeout(r, NEWS_BUDGET_MS))]);
+    const tNews = Date.now();
     const candidates = await gatherCandidates(db, { ...prefs, weights: topicWeight, avoidedSources: profile.avoided_sources });
     if (!candidates.length) throw new Error("no recent articles found for this reader's topics");
 
@@ -355,9 +359,12 @@ export async function generatePaperForReader(userId: string, trigger: Trigger): 
     let note: string | null = null;
     try {
       const edited = await runEditor(profile, weights, candidates);
+      const tEditor = Date.now();
       sections = edited.sections;
       provider = edited.provider;
       await writeBriefings(sections.flatMap((s) => s.stories), profile.language);
+      console.log(`generate ${userId} ${date}: news ${tNews - t0}ms, editor ${tEditor - tNews}ms, ` +
+        `briefings ${Date.now() - tEditor}ms, ${candidates.length} candidates`);
     } catch (e) {
       console.error("editor failed, plain edition:", (e as Error).message);
       sections = plainEdition(weights, candidates, (LENGTH[profile.length] ?? LENGTH.standard)[1]);
