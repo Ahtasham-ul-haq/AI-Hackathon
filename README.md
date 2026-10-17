@@ -55,7 +55,14 @@ cp .env.example .env.local   # fill in the values below
 npm run dev
 ```
 
-1. Create a free Supabase project. In the SQL editor, run all files in `supabase/migrations/` in order (`0001_init.sql`, then later migrations), then run `supabase/seed.sql`. For a smooth demo, turn off **Auth → Providers → Email → Confirm email**. To enable Google sign-in, turn on the Google provider (it needs a Google OAuth client) and add `<site>/auth/callback` to the redirect URLs.
+1. Create a free Supabase project. In the SQL editor, run all files in `supabase/migrations/` in order (`0001_init.sql`, then later migrations), then run `supabase/seed.sql`. For a smooth demo, turn off **Auth → Providers → Email → Confirm email**. To enable Google sign-in, turn on the Google provider and configure the callback URLs as described below.
+
+### Google sign-in callback URLs
+
+- In **Supabase → Authentication → URL Configuration**, set the Site URL to `https://daybreak-mu-five.vercel.app` and add `https://daybreak-mu-five.vercel.app/auth/callback` to the redirect URLs. Add `http://localhost:3000/auth/callback` only if you use Google sign-in locally.
+- In the Google OAuth client, set the authorized redirect URI to `https://<project-ref>.supabase.co/auth/v1/callback` (the Supabase Auth callback, not the Margins app callback).
+- Set Vercel's Production `NEXT_PUBLIC_SITE_URL` to `https://daybreak-mu-five.vercel.app` for email-confirmation redirects.
+- If the Vercel deployment hostname changes, update the Supabase Site URL and redirect allow-list to match the hostname where sign-in starts.
 2. Fill in `.env.local`:
 
 | Variable | Where it comes from |

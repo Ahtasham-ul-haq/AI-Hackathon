@@ -103,7 +103,11 @@ export function PreferencesForm({ prefs }: { prefs: Prefs }) {
         <div className="mt-3 flex items-center gap-3 text-xs text-stone-600">
           <label htmlFor="delivery_hour">Preferred local delivery hour</label>
           <select id="delivery_hour" name="delivery_hour" defaultValue={prefs.delivery_hour} className="rounded border border-stone-300 bg-white px-2 py-1">
-            {Array.from({ length: 24 }, (_, hour) => <option key={hour} value={hour}>{String(hour).padStart(2, "0")}:00</option>)}
+            {Array.from({ length: 24 }, (_, hour) => {
+              const period = hour < 12 ? "AM" : "PM";
+              const displayHour = hour % 12 || 12;
+              return <option key={hour} value={hour}>{displayHour}:00 {period}</option>;
+            })}
           </select>
         </div>
         <p className="mt-2 text-xs text-stone-500">You can turn delivery off here at any time.</p>
