@@ -57,6 +57,7 @@ function StoryBlock({ story, img, lead }: { story: PaperStory; img: Img; lead?: 
     <View style={s.story} wrap={!lead}>
       {img && (
         <View>
+          {/* eslint-disable-next-line jsx-a11y/alt-text -- react-pdf Image, not an HTML img */}
           <Image src={img} style={[s.photo, { height: lead ? 190 : 95 }]} />
           {story.image_credit && <Text style={s.credit}>PHOTO: {story.image_credit.toUpperCase()}</Text>}
         </View>
