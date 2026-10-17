@@ -16,6 +16,8 @@ type JsonRequest<S extends z.ZodType> = {
 };
 
 const GEMINI_MODEL = process.env.GEMINI_MODEL || "gemini-3.8-flash";
+// Second Gemini model (separate capacity/quota) tried before Groq; Groq is optional.
+const GEMINI_FALLBACK_MODEL = process.env.GEMINI_FALLBACK_MODEL || "gemini-3.5-flash";
 const GROQ_MODEL = process.env.GROQ_MODEL || "llama-3.3-70b-versatile";
 const TIMEOUT_MS = 45_000;
 
@@ -45,13 +47,13 @@ function parseJson(text: string): unknown {
   return JSON.parse(trimmed);
 }
 
-async function callGemini<S extends z.ZodType>(req: JsonRequest<S>): Promise<z.infer<S>> {
+async function callGemini<S extends z.ZodType>(req: JsonRequest<S>, model = GEMINI_MODEL): Promise<z.infer<S>> {
   const key = process.env.GEMINI_API_KEY;
   if (!key) throw new Error("GEMINI_API_KEY not set");
   const ai = new GoogleGenAI({ apiKey: key });
   const res = await retryTransient(() => withTimeout(
     ai.models.generateContent({
-      model: GEMINI_MODEL,
+      model,
       contents: req.prompt,
       config: {
         systemInstruction: req.system,
@@ -59,7 +61,7 @@ async function callGemini<S extends z.ZodType>(req: JsonRequest<S>): Promise<z.i
         responseMimeType: "application/json",
         responseJsonSchema: z.toJSONSchema(req.schema, { target: "draft-7" }),
         // Flash models think by default; editing and briefing don't need it and it costs latency.
-        ...(GEMINI_MODEL.includes("flash") ? { thinkingConfig: { thinkingBudget: 0 } } : {}),
+        ...(model.includes("flash") ? { thinkingConfig: { thinkingBudget: 0 } } : {}),
       },
     }),
   ));
@@ -89,8 +91,9 @@ async function callGroq<S extends z.ZodType>(req: JsonRequest<S>): Promise<z.inf
 }
 
 /**
- * One interface for structured AI output: Gemini first, Groq on any failure
- * (quota, timeout, invalid JSON). Throws only if both fail.
+ * One interface for structured AI output: Gemini first, then a second Gemini
+ * model, then Groq (if GROQ_API_KEY is set) on any failure
+ * (quota, timeout, invalid JSON). Throws only if all fail.
  */
 export async function generateJson<S extends z.ZodType>(req: JsonRequest<S>): Promise<JsonResult<z.infer<S>>> {
   const errors: string[] = [];
@@ -98,6 +101,13 @@ export async function generateJson<S extends z.ZodType>(req: JsonRequest<S>): Pr
     return { data: await callGemini(req), provider: "gemini" };
   } catch (e) {
     errors.push(`gemini: ${(e as Error).message}`);
+  }
+  if (GEMINI_FALLBACK_MODEL && GEMINI_FALLBACK_MODEL !== GEMINI_MODEL) {
+    try {
+      return { data: await callGemini(req, GEMINI_FALLBACK_MODEL), provider: "gemini" };
+    } catch (e) {
+      errors.push(`gemini fallback: ${(e as Error).message}`);
+    }
   }
   try {
     return { data: await callGroq(req), provider: "groq" };

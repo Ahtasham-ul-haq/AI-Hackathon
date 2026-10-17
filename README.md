@@ -14,7 +14,7 @@ Every morning, a newspaper written for one reader. It covers the topics they car
 - **Web and PDF.** The web edition shows sections and outlet-credited photos; a broken photo is simply left out. The PDF uses a traditional newspaper layout (masthead, rules, two columns) with the same stories and photos, and is cached after the first download. Skip hides a story on the web only, so the PDF is always the complete edition.
 - **History.** Every paper is kept. Recent editions are listed, older ones are reachable through a date picker, and each can be read on the web or downloaded as a PDF.
 - **Settings.** Topics, region, language, preferred and avoided sources, and paper length. Changes apply from the next morning; saved papers never change.
-- **Resilience.** If Gemini fails, Groq takes over automatically. If both fail, the reader gets a plain edition with the outlets' own headlines and summaries, grouped by topic, plus a note explaining why. If the PDF fails to render, the web edition is unaffected, the button reads "PDF is being prepared", and the hourly run retries.
+- **Resilience.** If the main Gemini model fails, a second Gemini model takes over, then Groq if a key is configured. If all fail, the reader gets a plain edition with the outlets' own headlines and summaries, grouped by topic, plus a note explaining why. If the PDF fails to render, the web edition is unaffected, the button reads "PDF is being prepared", and the hourly run retries.
 
 ## Architecture
 
@@ -34,7 +34,7 @@ Browser ──> Next.js 16 (App Router) on Vercel
               claim user+local_date -> refresh news (RSS + GNews, 1h cache)
               -> dedupe -> balance candidates by weight (~1 in 5 discovery)
               -> editor AI call (stories, groups, sections) -> briefing AI calls x5 in parallel
-              -> save paper atomically   (Gemini -> Groq -> plain edition)
+              -> save paper atomically   (Gemini -> Gemini fallback -> Groq if set -> plain edition)
                      │
 GitHub Actions ──hourly──> /api/cron/morning
 Supabase: Postgres (RLS owner-only) · Auth (email/password + Google) · Storage (PDFs)
@@ -61,7 +61,8 @@ npm run dev
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Project Settings → API |
 | `SUPABASE_SERVICE_ROLE_KEY` | Project Settings → API (server only) |
 | `GEMINI_API_KEY`, `GEMINI_MODEL` | Google AI Studio; default model `gemini-3.8-flash` |
-| `GROQ_API_KEY`, `GROQ_MODEL` | console.groq.com; default `llama-3.3-70b-versatile` (fallback) |
+| `GEMINI_FALLBACK_MODEL` | second Gemini model tried on failure; default `gemini-3.5-flash` |
+| `GROQ_API_KEY`, `GROQ_MODEL` | optional, console.groq.com; default `llama-3.3-70b-versatile` |
 | `GNEWS_API_KEY` | gnews.io |
 | `CRON_SECRET` | any long random string; also stored as a GitHub Actions secret |
 | `BUILDER_EMAIL` | the account allowed to use "Generate next edition now" |
