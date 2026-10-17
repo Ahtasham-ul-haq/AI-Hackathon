@@ -2,6 +2,7 @@ import { requireReader } from "@/lib/auth";
 import { START_WEIGHT, TOPIC_BY_SLUG } from "@/lib/topics";
 import { SiteHeader } from "@/components/SiteHeader";
 import { AutoRefresh } from "@/components/paper/Preparing";
+import { SubmitButton } from "@/components/Loading";
 import { correctInterest, removeInterest, resetToOnboarding } from "./actions";
 
 type Row = {
@@ -56,13 +57,13 @@ export default async function LearnedPage() {
               <div className="mt-2 flex flex-wrap items-center gap-3 text-xs text-stone-600">
                 <span>{SOURCE_LABEL[r.source]} · interest {r.weight.toFixed(1)}</span>
                 <form action={correctInterest.bind(null, r.id, "more")} className="ml-auto">
-                  <button className="underline">More of this</button>
+                  <SubmitButton pendingLabel="Saving…" className="underline">More of this</SubmitButton>
                 </form>
                 <form action={correctInterest.bind(null, r.id, "less")}>
-                  <button className="underline">Less of this</button>
+                  <SubmitButton pendingLabel="Saving…" className="underline">Less of this</SubmitButton>
                 </form>
                 <form action={removeInterest.bind(null, r.id)}>
-                  <button className="text-red-800 underline">Remove</button>
+                  <SubmitButton pendingLabel="Removing…" className="text-red-800 underline">Remove</SubmitButton>
                 </form>
               </div>
             </li>
@@ -70,9 +71,9 @@ export default async function LearnedPage() {
           {!rows.length && <li className="text-stone-500">No interests yet. Pick topics in Settings.</li>}
         </ul>
         <form action={resetToOnboarding} className="mt-8">
-          <button className="rounded border border-stone-400 px-4 py-2 text-sm hover:bg-stone-100">
+          <SubmitButton pendingLabel="Resetting your interests…" className="rounded border border-stone-400 px-4 py-2 text-sm hover:bg-stone-100">
             Reset to my onboarding choices
-          </button>
+          </SubmitButton>
         </form>
       </main>
     </>

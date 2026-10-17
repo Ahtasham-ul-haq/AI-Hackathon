@@ -3,6 +3,7 @@ import { requireReader } from "@/lib/auth";
 import { formatPaperDate } from "@/lib/time";
 import { SiteHeader } from "@/components/SiteHeader";
 import { DatePicker } from "./DatePicker";
+import { PdfButton } from "@/components/paper/PdfButton";
 
 export default async function HistoryPage() {
   const { supabase, user, profile } = await requireReader();
@@ -30,7 +31,7 @@ export default async function HistoryPage() {
               </Link>
               {p.status === "plain" && <span className="text-xs text-stone-500">plain edition</span>}
               <Link href={`/paper/${p.local_date}`} className="text-sm underline">Read</Link>
-              <Link href={`/api/papers/${p.id}/pdf`} prefetch={false} className="text-sm underline">PDF</Link>
+              <PdfButton paperId={p.id} date={p.local_date} className="text-sm underline" />
             </li>
           ))}
           {!papers?.length && <li className="py-3 text-stone-500">No papers yet.</li>}

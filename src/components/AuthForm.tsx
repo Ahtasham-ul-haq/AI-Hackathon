@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
+import { Spinner } from "@/components/Loading";
 import { signIn, signUp, type AuthState } from "@/app/auth/actions";
 import { createClient } from "@/lib/supabase/client";
 
@@ -11,12 +12,26 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
     undefined,
   );
 
-  async function google() {
-    const supabase = createClient();
-    await supabase.auth.signInWithOAuth({
+  const [google, setGoogle] = useState<{ busy: boolean; error?: string }>({ busy: false });
+
+  async function continueWithGoogle() {
+    setGoogle({ busy: true });
+    // Ask Supabase first so a disabled provider shows a clear message instead of a raw error page.
+    const settings = await fetch(`${process.env.NEXT_PUBLIC_SUPABASE_URL}/auth/v1/settings`, {
+      headers: { apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY! },
+    })
+      .then((r) => r.json())
+      .catch(() => null);
+    if (settings && !settings.external?.google) {
+      setGoogle({ busy: false, error: "Google sign-in isn't available yet. Please use email and password." });
+      return;
+    }
+    const { error } = await createClient().auth.signInWithOAuth({
       provider: "google",
       options: { redirectTo: `${window.location.origin}/auth/callback` },
     });
+    if (error) setGoogle({ busy: false, error: `Couldn't start Google sign-in: ${error.message}` });
+    // On success the browser is already on its way to Google, so stay busy.
   }
 
   return (
@@ -42,16 +57,24 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
           className="rounded border border-stone-300 bg-white px-3 py-2" />
         {state?.error && <p className="text-sm text-red-700">{state.error}</p>}
         {state?.message && <p className="text-sm text-green-800">{state.message}</p>}
-        <button disabled={pending}
+        <button disabled={pending} aria-busy={pending}
           className="rounded bg-stone-900 px-4 py-2 text-white hover:bg-stone-700 disabled:opacity-50">
-          {pending ? "Please wait…" : mode === "signup" ? "Sign up" : "Sign in"}
+          {pending ? (
+            <span role="status" aria-live="polite">
+              <Spinner className="mr-2 h-3.5 w-3.5" />
+              {mode === "signup" ? "Creating your account…" : "Signing you in…"}
+            </span>
+          ) : mode === "signup" ? "Sign up" : "Sign in"}
         </button>
       </form>
       <div className="my-4 text-center text-sm text-stone-500">or</div>
-      <button onClick={google}
-        className="w-full rounded border border-stone-300 bg-white px-4 py-2 hover:bg-stone-100">
-        Continue with Google
+      <button onClick={continueWithGoogle} disabled={google.busy || pending} aria-busy={google.busy}
+        className="w-full rounded border border-stone-300 bg-white px-4 py-2 hover:bg-stone-100 disabled:cursor-wait disabled:opacity-60">
+        {google.busy ? (
+          <span role="status" aria-live="polite"><Spinner className="mr-2 h-3.5 w-3.5" />Redirecting to Google…</span>
+        ) : "Continue with Google"}
       </button>
+      {google.error && <p role="alert" className="mt-2 text-sm text-red-700">{google.error}</p>}
       <p className="mt-6 text-sm text-stone-600">
         {mode === "signup" ? (
           <>Already have an account? <Link className="underline" href="/login">Sign in</Link></>

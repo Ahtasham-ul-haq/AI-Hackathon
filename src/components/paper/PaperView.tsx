@@ -1,7 +1,7 @@
-import Link from "next/link";
 import type { Paper } from "@/lib/papers";
 import { formatPaperDate } from "@/lib/time";
 import { StoryCard } from "./StoryCard";
+import { PdfButton } from "./PdfButton";
 
 export function PaperView({
   paper,
@@ -23,9 +23,7 @@ export function PaperView({
         <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-stone-900 pt-2 text-xs uppercase tracking-wider">
           <span>{formatPaperDate(paper.local_date)}</span>
           <span>{storyCount} stories · {paper.sections.length} sections</span>
-          <Link href={`/api/papers/${paper.id}/pdf`} prefetch={false} className="font-semibold underline">
-            {paper.pdf_failed_at && !paper.pdf_path ? "PDF is being prepared" : "Download PDF"}
-          </Link>
+          <PdfButton paperId={paper.id} date={paper.local_date} failedBefore={!!paper.pdf_failed_at && !paper.pdf_path} />
         </div>
       </header>
 

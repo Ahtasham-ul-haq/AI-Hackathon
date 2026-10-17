@@ -2,10 +2,12 @@
 
 import { useActionState } from "react";
 import { TopicPicker } from "@/components/TopicPicker";
+import { Spinner, useRotatingMessage } from "@/components/Loading";
 import { completeOnboarding, type OnboardingState } from "./actions";
 
 export function OnboardingForm() {
   const [state, action, pending] = useActionState<OnboardingState, FormData>(completeOnboarding, undefined);
+  const step = useRotatingMessage(["Saving your topics…", "Understanding what you like…", "Starting your first paper…"], pending, 2000);
   return (
     <form
       action={(fd: FormData) => {
@@ -28,9 +30,11 @@ export function OnboardingForm() {
           className="mt-2 w-full rounded border border-stone-300 bg-white px-3 py-2" />
       </section>
       {state?.error && <p className="text-sm text-red-700">{state.error}</p>}
-      <button disabled={pending}
+      <button disabled={pending} aria-busy={pending}
         className="self-start rounded bg-stone-900 px-6 py-2.5 text-white hover:bg-stone-700 disabled:opacity-50">
-        {pending ? "Setting up your paper…" : "Make my first paper"}
+        {pending ? (
+          <span role="status" aria-live="polite"><Spinner className="mr-2 h-3.5 w-3.5" />{step}</span>
+        ) : "Make my first paper"}
       </button>
     </form>
   );
