@@ -9,8 +9,8 @@ const serif = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: "Personal Morning Paper",
-  description: "Your AI-edited morning newspaper, built around what you read.",
+  title: "Margins — Personal Morning Paper",
+  description: "An AI-powered personalized daily newspaper built around what you read. Delivered every morning in print-ready and web editions.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

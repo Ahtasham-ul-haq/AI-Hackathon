@@ -83,3 +83,10 @@ export async function skippedStoryIds(db: SupabaseClient, userId: string, paper:
     .from("reading_events").select("story_id").eq("user_id", userId).eq("kind", "skip").in("story_id", ids);
   return (data ?? []).map((r) => r.story_id as string);
 }
+
+export async function savedStoryIds(db: SupabaseClient, userId: string, paper: Paper) {
+  const ids = paper.sections.flatMap((s) => s.stories.map((st) => st.id));
+  if (!ids.length) return [];
+  const { data } = await db.from("saved_stories").select("story_id").eq("user_id", userId).in("story_id", ids);
+  return (data ?? []).map((r) => r.story_id as string);
+}

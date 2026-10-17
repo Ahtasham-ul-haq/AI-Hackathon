@@ -107,7 +107,7 @@ TASK
 Edit this reader's morning paper. Choose ${range[0]}-${range[1]} stories in total.
 - Each story is one news event. Group articles from different outlets about the same event into one story (list all their ids).
 - Never use an article id in more than one story. Only use ids from the list.
-- Give most space to the reader's highest-interest topics and subtopics, but keep about 1 in 5 stories for their lower-interest or related topics so they can discover things.
+- Give most space to the reader's highest-interest topics and subtopics. Keep about ${profile.discovery_ratio}% of stories for lower-interest or related topics so they can discover things.
 - If a reader topic has too few articles, fill with stories from related topics and set is_related=true.
 - Create 3-6 sections with your own short names built around this reader's biggest stories, in the order a newspaper would print them; the first section is the front page with the most important stories for this reader.
 - Headlines must state only what the articles say.`;
@@ -338,10 +338,11 @@ export async function generatePaperForReader(userId: string, trigger: Trigger): 
   try {
     const { data: weightRows } = await db
       .from("interest_weights").select("topic, subtopic, label, weight").eq("user_id", userId);
-    const weights = (weightRows ?? []) as Weight[];
+    const mutedTopics = new Set(profile.muted_topics ?? []);
+    const weights = ((weightRows ?? []) as Weight[]).filter((w) => !mutedTopics.has(w.topic));
     const topicWeight: Record<string, number> = {};
     for (const w of weights) topicWeight[w.topic] = Math.max(topicWeight[w.topic] ?? -Infinity, w.weight);
-    const topics = Object.keys(topicWeight).filter((t) => TOPIC_BY_SLUG[t]).sort((a, b) => topicWeight[b] - topicWeight[a]);
+    const topics = Object.keys(topicWeight).filter((t) => TOPIC_BY_SLUG[t] && !mutedTopics.has(t)).sort((a, b) => topicWeight[b] - topicWeight[a]);
     const subtopics = weights.filter((w) => w.subtopic && w.weight > 0).sort((a, b) => b.weight - a.weight)
       .map((w) => ({ topic: w.topic, label: w.label }));
 
@@ -350,7 +351,9 @@ export async function generatePaperForReader(userId: string, trigger: Trigger): 
     // Don't let slow feeds hold up the paper: use what's cached after 15s; the rest keeps loading.
     await Promise.race([refreshNews(db, prefs), new Promise((r) => setTimeout(r, NEWS_BUDGET_MS))]);
     const tNews = Date.now();
-    const candidates = await gatherCandidates(db, { ...prefs, weights: topicWeight, avoidedSources: profile.avoided_sources });
+    if (!topics.length) throw new Error("all selected topics are muted; unmute a topic in Settings to make a paper");
+    const { data: mutedArticleRows } = await db.from("muted_articles").select("article_id").eq("user_id", userId);
+    const candidates = await gatherCandidates(db, { ...prefs, weights: topicWeight, avoidedSources: profile.avoided_sources, discoveryRatio: profile.discovery_ratio, mutedArticleIds: (mutedArticleRows ?? []).map((row) => row.article_id) });
     if (!candidates.length) throw new Error("no recent articles found for this reader's topics");
 
     let sections: DraftSection[];

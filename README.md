@@ -11,6 +11,9 @@ Every morning, a newspaper written for one reader. It covers the topics they car
 - **An AI editor.** One AI call picks 15-20 stories from 40-60 recent candidates, groups articles from different outlets that cover the same event, and names and orders the sections. About 1 in 5 stories come from weaker or related interests so the reader keeps discovering new things. Topics with too little news are filled with clearly labelled **Related** stories.
 - **Briefings you can trust.** Briefings state only what the source snippets say. Each story lists its outlets and publish dates, carries a visible **AI-written summary** label, says when sources disagree, and links to the original article.
 - **Learning you can see.** Each reader has a weight for every topic and subtopic, starting at 3.0. Opening a story adds 1.0, the Skip button subtracts 1.0, and scrolling past without opening subtracts 0.2 (once per story). Weights update immediately. The **What we've learned** page shows interests strengthening and weakening live, and readers can remove or correct any of them or reset to their onboarding choices.
+- **Reader controls.** Every reader can see why a story matched their interests, choose how much of the edition is discovery, mute stories or topics, restore muted coverage, save stories across devices, and listen using their browser's speech engine.
+- **Daily email delivery.** Readers can opt in to an edition email and choose a local delivery hour. The hourly cron sends through Resend when configured; delivery can be disabled in Settings.
+- **One free product.** All current features are available to every reader; there are no paid plans, feature gates, or payment flows.
 - **Web and PDF.** The web edition shows sections and outlet-credited photos; a broken photo is simply left out. The PDF uses a traditional newspaper layout (masthead, rules, two columns) with the same stories and photos, and is cached after the first download. Skip hides a story on the web only, so the PDF is always the complete edition.
 - **History.** Every paper is kept. Recent editions are listed, older ones are reachable through a date picker, and each can be read on the web or downloaded as a PDF.
 - **Settings.** Topics, region, language, preferred and avoided sources, and paper length. Changes apply from the next morning; saved papers never change.
@@ -37,7 +40,7 @@ Browser ──> Next.js 16 (App Router) on Vercel
               -> save paper atomically   (Gemini -> Gemini fallback -> Groq if set -> plain edition)
                      │
 GitHub Actions ──hourly──> /api/cron/morning
-Supabase: Postgres (RLS owner-only) · Auth (email/password + Google) · Storage (PDFs)
+Supabase: Postgres (RLS owner-only) · Auth (email/password + Google) · Storage (PDFs) · saved stories and delivery status
 ```
 
 **Data model** (`supabase/migrations/0001_init.sql`): `profiles`, `topics` (seeded), `interest_weights`, `articles` (shared, unique URL; only headline, snippet, source, date, image URL and link are stored), `fetch_cache`, `papers` (unique per user + local date), `sections`, `stories`, `story_articles`, `reading_events` (open | skip | scroll_past, once per story per kind), `generation_runs` (provider used, error).
@@ -52,7 +55,7 @@ cp .env.example .env.local   # fill in the values below
 npm run dev
 ```
 
-1. Create a free Supabase project. In the SQL editor, run `supabase/migrations/0001_init.sql` and then `supabase/seed.sql`. For a smooth demo, turn off **Auth → Providers → Email → Confirm email**. To enable Google sign-in, turn on the Google provider (it needs a Google OAuth client) and add `<site>/auth/callback` to the redirect URLs.
+1. Create a free Supabase project. In the SQL editor, run all files in `supabase/migrations/` in order (`0001_init.sql`, then later migrations), then run `supabase/seed.sql`. For a smooth demo, turn off **Auth → Providers → Email → Confirm email**. To enable Google sign-in, turn on the Google provider (it needs a Google OAuth client) and add `<site>/auth/callback` to the redirect URLs.
 2. Fill in `.env.local`:
 
 | Variable | Where it comes from |
@@ -67,6 +70,7 @@ npm run dev
 | `CRON_SECRET` | any long random string; also stored as a GitHub Actions secret |
 | `BUILDER_EMAIL` | the account allowed to use "Generate next edition now" |
 | `NEXT_PUBLIC_SITE_URL` | `http://localhost:3000` locally, or the Vercel URL |
+| `RESEND_API_KEY`, `EMAIL_FROM` | Optional Resend API key and verified sender for daily email delivery |
 
 3. Optionally run `npm run rls-check` to verify reader isolation.
 

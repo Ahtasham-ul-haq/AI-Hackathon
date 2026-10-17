@@ -3,6 +3,7 @@ import { generatePaperForReader } from "@/lib/generate";
 import { ensurePdf } from "@/lib/pdf";
 import { createServiceClient } from "@/lib/supabase/server";
 import { localDate, localHour } from "@/lib/time";
+import { deliverPaper } from "@/lib/delivery";
 
 export const maxDuration = 300;
 
@@ -68,5 +69,17 @@ export async function POST(request: NextRequest) {
     }
   }
 
-  return NextResponse.json({ due: due.length, notStarted: queue.length, results, pdfs, ms: Date.now() - started });
+  // Send opted-in readers their edition at or after their chosen local hour.
+  const { data: subscribers } = await db.from("profiles").select("id, timezone, delivery_hour").eq("onboarded", true).eq("email_delivery", true);
+  const deliveries: Record<string, string> = {};
+  for (const subscriber of subscribers ?? []) {
+    const hour = localHour(subscriber.timezone);
+    if (hour < subscriber.delivery_hour || Date.now() - started > BUDGET_MS) continue;
+    const date = localDate(subscriber.timezone);
+    const { data: paper } = await db.from("papers").select("id").eq("user_id", subscriber.id).eq("local_date", date).maybeSingle();
+    if (!paper) continue;
+    deliveries[subscriber.id] = await deliverPaper(subscriber.id, paper.id);
+  }
+
+  return NextResponse.json({ due: due.length, notStarted: queue.length, results, pdfs, deliveries, ms: Date.now() - started });
 }

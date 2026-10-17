@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { after } from "next/server";
 import { requireReader, isBuilder } from "@/lib/auth";
 import { generatePaperForReader } from "@/lib/generate";
-import { loadPaper, skippedStoryIds } from "@/lib/papers";
+import { loadPaper, skippedStoryIds, savedStoryIds } from "@/lib/papers";
 import { localDate } from "@/lib/time";
 import { SiteHeader } from "@/components/SiteHeader";
 import { PaperView } from "@/components/paper/PaperView";
@@ -39,6 +39,7 @@ export default async function TodayPage() {
   }
 
   const skipped = await skippedStoryIds(supabase, user.id, paper);
+  const saved = await savedStoryIds(supabase, user.id, paper);
   return (
     <>
       <SiteHeader email={profile.email} />
@@ -49,7 +50,7 @@ export default async function TodayPage() {
         </div>
       )}
       {isBuilder(user.email) && <BuilderButton />}
-      <PaperView paper={paper} skipped={skipped} readerName={profile.display_name} />
+      <PaperView paper={paper} skipped={skipped} savedStoryIds={saved} readerName={profile.display_name} language={profile.language} />
     </>
   );
 }

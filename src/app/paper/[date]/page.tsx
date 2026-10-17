@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { requireReader } from "@/lib/auth";
-import { loadPaper, skippedStoryIds } from "@/lib/papers";
+import { loadPaper, skippedStoryIds, savedStoryIds } from "@/lib/papers";
 import { SiteHeader } from "@/components/SiteHeader";
 import { PaperView } from "@/components/paper/PaperView";
 
@@ -21,10 +21,11 @@ export default async function PaperByDatePage({ params }: PageProps<"/paper/[dat
     );
   }
   const skipped = await skippedStoryIds(supabase, user.id, paper);
+  const saved = await savedStoryIds(supabase, user.id, paper);
   return (
     <>
       <SiteHeader email={profile.email} />
-      <PaperView paper={paper} skipped={skipped} readerName={profile.display_name} />
+      <PaperView paper={paper} skipped={skipped} savedStoryIds={saved} readerName={profile.display_name} language={profile.language} />
     </>
   );
 }

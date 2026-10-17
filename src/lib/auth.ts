@@ -16,6 +16,10 @@ export type Profile = {
   preferred_sources: string[];
   avoided_sources: string[];
   length: "short" | "standard" | "long";
+  discovery_ratio: number;
+  muted_topics: string[];
+  email_delivery: boolean;
+  delivery_hour: number;
 };
 
 /** Current reader + profile, or redirect to /login. */

@@ -288,7 +288,7 @@ export type Candidate = Article & { related: boolean };
  */
 export async function gatherCandidates(
   db: SupabaseClient,
-  prefs: ReaderNewsPrefs & { weights: Record<string, number>; avoidedSources: string[] },
+  prefs: ReaderNewsPrefs & { weights: Record<string, number>; avoidedSources: string[]; discoveryRatio?: number; mutedArticleIds?: string[] },
   target = 55,
 ): Promise<Candidate[]> {
   const related = new Set<string>();
@@ -305,7 +305,7 @@ export async function gatherCandidates(
 
   const avoided = prefs.avoidedSources.map((s) => s.toLowerCase());
   const pool = dedupeArticles(
-    ((data ?? []) as Article[]).filter((a) => !avoided.some((s) => a.source_name.toLowerCase().includes(s))),
+    ((data ?? []) as Article[]).filter((a) => !avoided.some((s) => a.source_name.toLowerCase().includes(s)) && !(prefs.mutedArticleIds ?? []).includes(a.id)),
   );
 
   // Subtopic matches float to the top of their topic.
@@ -321,7 +321,8 @@ export async function gatherCandidates(
   }
   byTopic.forEach((list) => list.sort((x, y) => score(y) - score(x)));
 
-  const mainSlots = Math.round(target * 0.8);
+  const discoveryRatio = Math.max(0, Math.min(40, prefs.discoveryRatio ?? 20));
+  const mainSlots = Math.round(target * (1 - discoveryRatio / 100));
   const total = prefs.topics.reduce((s, t) => s + Math.max(prefs.weights[t] ?? 1, 0.5), 0) || 1;
   const picked: Candidate[] = [];
   const take = (topic: string, n: number, isRelated: boolean) => {
