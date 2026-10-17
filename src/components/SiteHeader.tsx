@@ -11,37 +11,44 @@ export function SiteHeader({ email }: { email?: string | null }) {
 
   const links = [
     { href: "/paper", label: "Today" },
-    { href: "/history", label: "Past editions" },
-    { href: "/saved", label: "Saved stories" },
-    { href: "/premium", label: "The Margins standard" },
-    { href: "/learned", label: "What we've learned" },
+    { href: "/history", label: "Editions" },
+    { href: "/saved", label: "Saved" },
+    { href: "/premium", label: "About" },
+    { href: "/learned", label: "Interests" },
     { href: "/settings", label: "Settings" },
   ];
 
+  function isActive(href: string) {
+    return href === "/paper"
+      ? pathname === href || pathname.startsWith(`${href}/`)
+      : pathname === href || pathname.startsWith(`${href}/`);
+  }
+
   return (
-    <header className="sticky top-0 z-40 border-b border-stone-300/80 bg-[#faf8f3]/95 backdrop-blur-md print:hidden transition-all">
-      <div className="mx-auto flex w-full max-w-5xl items-center justify-between px-4 py-3 sm:px-6">
+    <header className="sticky top-0 z-40 border-b border-stone-300 bg-[#faf8f3]/95 backdrop-blur-md print:hidden">
+      <div className="mx-auto flex min-h-16 w-full max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-8">
         {/* Brand */}
-        <Link href="/paper" className="group flex items-baseline gap-2">
-          <span className="font-serif text-xl font-black tracking-tight text-stone-900 group-hover:text-stone-700">
+        <Link href="/paper" className="group flex shrink-0 items-baseline gap-2.5 whitespace-nowrap">
+          <span className="font-serif text-2xl font-black tracking-[-0.06em] text-stone-900 group-hover:text-stone-700">
             MARGINS
           </span>
-          <span className="hidden text-[10px] font-semibold uppercase tracking-[0.2em] text-stone-500 sm:inline-block">
-            Morning Paper
+          <span className="hidden whitespace-nowrap border-l border-stone-300 pl-2.5 text-[9px] font-semibold uppercase tracking-[0.18em] text-stone-500 sm:inline-block">
+            Daily Edition
           </span>
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden items-center gap-6 text-xs font-medium uppercase tracking-wider text-stone-600 md:flex">
+        <nav aria-label="Main navigation" className="ml-auto hidden items-center gap-5 whitespace-nowrap text-[11px] font-semibold uppercase tracking-[0.11em] text-stone-600 lg:flex 2xl:gap-7">
           {links.map((link) => {
-            const isActive = pathname === link.href || (link.href !== "/paper" && pathname.startsWith(link.href));
+            const active = isActive(link.href);
             return (
               <Link
                 key={link.href}
                 href={link.href}
-                className={`transition-all py-1 border-b-2 ${
-                  isActive
-                    ? "border-stone-900 font-bold text-stone-950"
+                aria-current={active ? "page" : undefined}
+                className={`border-b-2 py-2 transition-colors ${
+                  active
+                    ? "border-stone-900 text-stone-950"
                     : "border-transparent hover:border-stone-400 hover:text-stone-900"
                 }`}
               >
@@ -50,10 +57,10 @@ export function SiteHeader({ email }: { email?: string | null }) {
             );
           })}
 
-          <form action={signOut} className="ml-2">
+          <form action={signOut} className="ml-1 border-l border-stone-300 pl-4">
             <button
               type="submit"
-              className="rounded border border-stone-300 px-2.5 py-1 text-xs text-stone-500 transition hover:border-stone-400 hover:bg-stone-100 hover:text-stone-800"
+              className="rounded border border-stone-300 px-3 py-2 text-[11px] font-semibold text-stone-600 transition hover:border-stone-500 hover:bg-white hover:text-stone-900"
               title={email ?? undefined}
             >
               Sign out
@@ -62,12 +69,14 @@ export function SiteHeader({ email }: { email?: string | null }) {
         </nav>
 
         {/* Mobile menu button */}
-        <div className="flex items-center gap-2 md:hidden">
+        <div className="flex items-center gap-2 lg:hidden">
           <button
             type="button"
             onClick={() => setMenuOpen((o) => !o)}
             aria-label="Toggle navigation menu"
-            className="rounded p-1.5 text-stone-700 hover:bg-stone-200"
+            aria-expanded={menuOpen}
+            aria-controls="site-mobile-menu"
+            className="rounded-md border border-stone-300 p-2 text-stone-700 transition hover:bg-white hover:text-stone-950"
           >
             <svg
               className="h-5 w-5"
@@ -88,27 +97,28 @@ export function SiteHeader({ email }: { email?: string | null }) {
 
       {/* Mobile Drawer */}
       {menuOpen && (
-        <div className="border-t border-stone-200 bg-[#faf8f3] px-4 py-3 md:hidden animate-fade-in shadow-md">
-          <nav className="flex flex-col space-y-2 text-xs font-medium uppercase tracking-wider text-stone-700">
+        <div id="site-mobile-menu" className="border-t border-stone-200 bg-[#faf8f3] px-4 py-4 shadow-md lg:hidden sm:px-6">
+          <nav aria-label="Main navigation" className="mx-auto flex max-w-7xl flex-col gap-1 text-xs font-semibold uppercase tracking-wider text-stone-700">
             {links.map((link) => {
-              const isActive = pathname === link.href;
+              const active = isActive(link.href);
               return (
                 <Link
                   key={link.href}
                   href={link.href}
                   onClick={() => setMenuOpen(false)}
-                  className={`py-1.5 ${isActive ? "font-bold text-stone-950 underline underline-offset-4" : "hover:text-stone-900"}`}
+                  aria-current={active ? "page" : undefined}
+                  className={`rounded px-3 py-2.5 ${active ? "bg-stone-200/70 text-stone-950" : "hover:bg-stone-100 hover:text-stone-900"}`}
                 >
                   {link.label}
                 </Link>
               );
             })}
-            <div className="border-t border-stone-200 pt-2 flex items-center justify-between">
-              {email && <span className="text-[11px] text-stone-500 truncate max-w-[200px]">{email}</span>}
+            <div className="mt-2 flex items-center justify-between gap-3 border-t border-stone-200 pt-3">
+              {email && <span className="max-w-[70%] truncate text-[11px] text-stone-500">{email}</span>}
               <form action={signOut}>
                 <button
                   type="submit"
-                  className="rounded border border-stone-300 bg-white px-2.5 py-1 text-xs text-stone-600 hover:bg-stone-100"
+                  className="rounded border border-stone-300 bg-white px-3 py-2 text-xs text-stone-600 hover:bg-stone-100"
                 >
                   Sign out
                 </button>
