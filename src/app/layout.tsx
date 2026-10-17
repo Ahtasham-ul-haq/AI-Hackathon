@@ -3,7 +3,10 @@ import { Geist, Playfair_Display } from "next/font/google";
 import "./globals.css";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
-const serif = Playfair_Display({ variable: "--font-serif-display", subsets: ["latin"] });
+const serif = Playfair_Display({
+  variable: "--font-serif-display",
+  subsets: ["latin"],
+});
 
 export const metadata: Metadata = {
   title: "Personal Morning Paper",
@@ -12,7 +15,11 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${serif.variable} h-full antialiased`}>
+    <html
+      suppressHydrationWarning
+      lang="en"
+      className={`${geistSans.variable} ${serif.variable} h-full antialiased`}
+    >
       <body className="flex min-h-full flex-col font-sans">{children}</body>
     </html>
   );
