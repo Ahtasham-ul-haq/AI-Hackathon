@@ -72,6 +72,7 @@ create table public.papers (
   status text not null check (status in ('ready','plain')),
   note text,                                 -- explanatory note for plain edition
   pdf_path text,
+  pdf_failed_at timestamptz,                 -- last render failure; hourly run retries
   created_at timestamptz not null default now(),
   unique (user_id, local_date)
 );

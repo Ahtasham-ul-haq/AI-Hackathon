@@ -33,18 +33,19 @@ export type Paper = {
   status: "ready" | "plain";
   note: string | null;
   pdf_path: string | null;
+  pdf_failed_at: string | null;
   created_at: string;
   sections: PaperSection[];
 };
 
 type Row = {
   id: string; user_id: string; local_date: string; status: "ready" | "plain"; note: string | null;
-  pdf_path: string | null; created_at: string;
+  pdf_path: string | null; pdf_failed_at: string | null; created_at: string;
   sections: { id: string; name: string; position: number }[];
   stories: (Omit<PaperStory, "sources"> & { section_id: string; story_articles: { articles: PaperSource | null }[] })[];
 };
 
-const SELECT = `id, user_id, local_date, status, note, pdf_path, created_at,
+const SELECT = `id, user_id, local_date, status, note, pdf_path, pdf_failed_at, created_at,
   sections(id, name, position),
   stories(id, section_id, position, headline, briefing, ai_written, topics, subtopics, is_related,
     sources_disagree, image_url, image_credit,

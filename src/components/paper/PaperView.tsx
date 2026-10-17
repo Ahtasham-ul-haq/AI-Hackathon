@@ -24,7 +24,7 @@ export function PaperView({
           <span>{formatPaperDate(paper.local_date)}</span>
           <span>{storyCount} stories · {paper.sections.length} sections</span>
           <Link href={`/api/papers/${paper.id}/pdf`} prefetch={false} className="font-semibold underline">
-            Download PDF
+            {paper.pdf_failed_at && !paper.pdf_path ? "PDF is being prepared" : "Download PDF"}
           </Link>
         </div>
       </header>
