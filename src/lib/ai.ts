@@ -15,7 +15,7 @@ type JsonRequest<S extends z.ZodType> = {
   temperature?: number;
 };
 
-const GEMINI_MODEL = process.env.GEMINI_MODEL || "gemini-2.5-flash";
+const GEMINI_MODEL = process.env.GEMINI_MODEL || "gemini-3.8-flash";
 const GROQ_MODEL = process.env.GROQ_MODEL || "llama-3.3-70b-versatile";
 const TIMEOUT_MS = 45_000;
 
@@ -24,6 +24,20 @@ function withTimeout<T>(p: Promise<T>, ms = TIMEOUT_MS): Promise<T> {
     p,
     new Promise<T>((_, reject) => setTimeout(() => reject(new Error(`AI call timed out after ${ms}ms`)), ms)),
   ]);
+}
+
+/** Retry overloaded/rate-limited calls briefly before falling back to the other provider. */
+async function retryTransient<T>(fn: () => Promise<T>, tries = 3): Promise<T> {
+  for (let i = 0; ; i++) {
+    try {
+      return await fn();
+    } catch (e) {
+      const msg = (e as Error).message;
+      const transient = /(429|500|503)|UNAVAILABLE|RESOURCE_EXHAUSTED|high demand/i.test(msg);
+      if (!transient || i >= tries - 1) throw e;
+      await new Promise((r) => setTimeout(r, 1500 * 2 ** i));
+    }
+  }
 }
 
 function parseJson(text: string): unknown {
@@ -35,7 +49,7 @@ async function callGemini<S extends z.ZodType>(req: JsonRequest<S>): Promise<z.i
   const key = process.env.GEMINI_API_KEY;
   if (!key) throw new Error("GEMINI_API_KEY not set");
   const ai = new GoogleGenAI({ apiKey: key });
-  const res = await withTimeout(
+  const res = await retryTransient(() => withTimeout(
     ai.models.generateContent({
       model: GEMINI_MODEL,
       contents: req.prompt,
@@ -48,7 +62,7 @@ async function callGemini<S extends z.ZodType>(req: JsonRequest<S>): Promise<z.i
         ...(GEMINI_MODEL.includes("flash") ? { thinkingConfig: { thinkingBudget: 0 } } : {}),
       },
     }),
-  );
+  ));
   return req.schema.parse(parseJson(res.text ?? ""));
 }
 

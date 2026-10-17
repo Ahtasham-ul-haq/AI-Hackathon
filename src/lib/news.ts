@@ -171,9 +171,9 @@ async function refreshGnews(
   q: string,
   topic: string,
   opts: { lang: string; country: string | null },
-) {
+): Promise<boolean> {
   const apiKey = process.env.GNEWS_API_KEY;
-  if (!apiKey || (await isFresh(db, key))) return;
+  if (!apiKey || (await isFresh(db, key))) return false;
   const params = new URLSearchParams({
     q,
     lang: opts.lang,
@@ -204,6 +204,7 @@ async function refreshGnews(
   } catch (e) {
     console.error(`GNews ${key} failed:`, (e as Error).message);
   }
+  return true;
 }
 
 export type ReaderNewsPrefs = {
@@ -221,18 +222,24 @@ export async function refreshNews(db: SupabaseClient, prefs: ReaderNewsPrefs) {
   const opts = { lang: prefs.language || "en", country: prefs.region };
   const geo = `${opts.lang}:${opts.country ?? "any"}`;
 
-  const jobs: Promise<unknown>[] = feeds.map((f) => refreshFeed(db, f));
-  for (const slug of prefs.topics.slice(0, 6)) {
+  const searches: [key: string, q: string, topic: string][] = [];
+  for (const slug of prefs.topics.slice(0, 5)) {
     const t = TOPIC_BY_SLUG[slug];
-    if (t) jobs.push(refreshGnews(db, `gnews:${slug}:${geo}`, t.query, slug, opts));
+    if (t) searches.push([`gnews:${slug}:${geo}`, t.query, slug]);
   }
   // One extra search for the reader's strongest subtopics (shared cache per exact query).
   const subs = prefs.subtopics.slice(0, 3);
   if (subs.length) {
     const q = subs.map((s) => `"${s.label.replace(/"/g, "")}"`).join(" OR ");
-    jobs.push(refreshGnews(db, `gnews:q:${q.toLowerCase()}:${geo}`, q, subs[0].topic, opts));
+    searches.push([`gnews:q:${q.toLowerCase()}:${geo}`, q, subs[0].topic]);
   }
-  await Promise.all(jobs);
+  // GNews rejects bursts (HTTP 429), so searches run one at a time while RSS runs in parallel.
+  const gnews = (async () => {
+    for (const [key, q, topic] of searches) {
+      if (await refreshGnews(db, key, q, topic, opts)) await new Promise((r) => setTimeout(r, 1100));
+    }
+  })();
+  await Promise.all([...feeds.map((f) => refreshFeed(db, f)), gnews]);
 }
 
 const STOP = new Set(["the", "a", "an", "of", "to", "in", "on", "for", "and", "as", "at", "is", "with", "by", "after", "says", "new"]);

@@ -149,7 +149,7 @@ async function runEditor(profile: Profile, weights: Weight[], candidates: Candid
     }))
     .filter((s) => s.stories.length);
   if (sections.reduce((n, s) => n + s.stories.length, 0) < 3) throw new Error("editor returned too few usable stories");
-  return { sections: trimToMax(sections, range[1] + 2), provider };
+  return { sections: trimToMax(sections, range[1]), provider };
 }
 
 function trimToMax(sections: DraftSection[], max: number) {

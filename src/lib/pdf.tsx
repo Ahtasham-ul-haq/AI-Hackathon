@@ -14,13 +14,13 @@ const s = StyleSheet.create({
   note: { borderWidth: 0.5, borderColor: "#555", padding: 6, marginTop: 8, fontSize: 8.5, fontFamily: "Times-Italic" },
   sectionHead: { fontFamily: "Helvetica-Bold", fontSize: 11, textTransform: "uppercase", letterSpacing: 1.5, marginTop: 12, paddingBottom: 2, borderBottomWidth: 1.5, borderBottomColor: "#111" },
   columns: { flexDirection: "row", marginTop: 6 },
-  column: { flex: 1 },
+  column: { width: 251 },
   gutter: { width: 14, borderRightWidth: 0.5, borderRightColor: "#999", marginRight: 14 },
   story: { marginBottom: 10, paddingBottom: 8, borderBottomWidth: 0.5, borderBottomColor: "#bbb" },
   kicker: { fontFamily: "Helvetica", fontSize: 6.5, textTransform: "uppercase", letterSpacing: 0.8, color: "#555", marginBottom: 2 },
   headline: { fontFamily: "Times-Bold", fontSize: 13, lineHeight: 1.15, marginBottom: 3 },
   leadHeadline: { fontFamily: "Times-Bold", fontSize: 24, lineHeight: 1.1, marginBottom: 4 },
-  body: { lineHeight: 1.35 },
+  body: { fontSize: 9.5, lineHeight: 1.3 },
   leadBody: { fontSize: 11, lineHeight: 1.4, textAlign: "justify" },
   photo: { width: "100%", objectFit: "cover", marginBottom: 2 },
   credit: { fontFamily: "Helvetica", fontSize: 6, color: "#666", marginBottom: 4 },
@@ -55,18 +55,21 @@ function shortDate(iso: string | null) {
 function StoryBlock({ story, img, lead }: { story: PaperStory; img: Img; lead?: boolean }) {
   return (
     <View style={s.story} wrap={!lead}>
-      {img && (
-        <View>
-          {/* eslint-disable-next-line jsx-a11y/alt-text -- react-pdf Image, not an HTML img */}
-          <Image src={img} style={[s.photo, { height: lead ? 190 : 95 }]} />
-          {story.image_credit && <Text style={s.credit}>PHOTO: {story.image_credit.toUpperCase()}</Text>}
-        </View>
-      )}
-      <Text style={s.kicker}>
-        {story.is_related ? "Related · " : ""}
-        {story.ai_written ? "AI-written summary" : "Outlet's own summary"}
-      </Text>
-      <Text style={lead ? s.leadHeadline : s.headline}>{story.headline}</Text>
+      {/* Photo, label and headline stay together; the body may continue in the next column/page. */}
+      <View wrap={false}>
+        {img && (
+          <View>
+            {/* eslint-disable-next-line jsx-a11y/alt-text -- react-pdf Image, not an HTML img */}
+            <Image src={img} style={[s.photo, { height: lead ? 190 : 95 }]} />
+            {story.image_credit && <Text style={s.credit}>PHOTO: {story.image_credit.toUpperCase()}</Text>}
+          </View>
+        )}
+        <Text style={s.kicker}>
+          {story.is_related ? "Related · " : ""}
+          {story.ai_written ? "AI-written summary" : "Outlet's own summary"}
+        </Text>
+        <Text style={lead ? s.leadHeadline : s.headline}>{story.headline}</Text>
+      </View>
       <Text style={lead ? s.leadBody : s.body}>{story.briefing}</Text>
       {story.sources_disagree && <Text style={s.disagree}>The outlets&apos; reports differ on some details.</Text>}
       <Text style={s.sources}>

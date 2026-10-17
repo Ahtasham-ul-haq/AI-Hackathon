@@ -39,9 +39,10 @@ export async function noteToInterests(note: string): Promise<Interest[]> {
     );
   } catch {
     // Both providers failed: fall back to matching listed subtopic names.
-    const lower = text.toLowerCase();
+    // Whole words only ("Art" must not match "startups"). Subtopic names have no regex metacharacters.
+    const mentions = (s: string) => new RegExp(`\\b${s}\\b`, "i").test(text);
     return TOPICS.flatMap((t) =>
-      t.subtopics.filter((s) => lower.includes(s.toLowerCase())).map((s) => ({ topic: t.slug, subtopic: s, label: s })),
+      t.subtopics.filter(mentions).map((s) => ({ topic: t.slug, subtopic: s, label: s })),
     );
   }
 }
