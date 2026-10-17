@@ -1,6 +1,7 @@
 import "server-only";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import type { Interest } from "@/lib/interests";
 
 export type Profile = {
   id: string;
@@ -9,6 +10,7 @@ export type Profile = {
   timezone: string;
   onboarded: boolean;
   interests_note: string | null;
+  baseline_interests: { picked: Interest[]; note: Interest[] } | null;
   region: string | null;
   language: string;
   preferred_sources: string[];

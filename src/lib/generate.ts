@@ -41,10 +41,12 @@ async function claim(db: SupabaseClient, userId: string, date: string, trigger: 
   const { data: paper } = await db.from("papers").select("id").eq("user_id", userId).eq("local_date", date).maybeSingle();
   if (paper) return false;
   const { data: run } = await db
-    .from("generation_runs").select("status, started_at").eq("user_id", userId).eq("local_date", date).single();
+    .from("generation_runs").select("status, started_at, finished_at").eq("user_id", userId).eq("local_date", date).single();
   if (!run) return false;
   const stale = run.status === "running" && Date.now() - new Date(run.started_at).getTime() > STALE_RUN_MS;
-  if (run.status !== "failed" && !stale) return false;
+  // Back off a minute after a failure so page refreshes don't hammer the providers.
+  const retryable = run.status === "failed" && Date.now() - new Date(run.finished_at ?? run.started_at).getTime() > 60_000;
+  if (!retryable && !stale) return false;
   // Conditional update so only one retry wins.
   const { data: won } = await db
     .from("generation_runs")

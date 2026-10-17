@@ -1,18 +1,55 @@
 import { redirect } from "next/navigation";
-import { requireReader } from "@/lib/auth";
-import { signOut } from "@/app/auth/actions";
+import { after } from "next/server";
+import { requireReader, isBuilder } from "@/lib/auth";
+import { generatePaperForReader } from "@/lib/generate";
+import { loadPaper, skippedStoryIds } from "@/lib/papers";
+import { localDate } from "@/lib/time";
+import { SiteHeader } from "@/components/SiteHeader";
+import { PaperView } from "@/components/paper/PaperView";
+import { AutoRefresh, Preparing } from "@/components/paper/Preparing";
+import { BuilderButton } from "@/components/BuilderButton";
 
-export default async function PaperPage() {
-  const { profile } = await requireReader();
+// On-visit fallback generation runs in after() from this page.
+export const maxDuration = 300;
+
+export default async function TodayPage() {
+  const { supabase, user, profile } = await requireReader();
   if (!profile.onboarded) redirect("/onboarding");
 
+  const today = localDate(profile.timezone);
+  const paper = await loadPaper(supabase, user.id);
+  const missingToday = !paper || paper.local_date < today;
+
+  let lastError: string | null = null;
+  if (missingToday) {
+    // On-visit fallback: the morning run missed this reader (or is still going).
+    after(() => generatePaperForReader(user.id, "visit").catch((e) => console.error("visit generation", e)));
+    const { data: run } = await supabase
+      .from("generation_runs").select("status, error").eq("user_id", user.id).eq("local_date", today).maybeSingle();
+    if (run?.status === "failed") lastError = run.error;
+  }
+
+  if (!paper) {
+    return (
+      <>
+        <SiteHeader email={profile.email} />
+        <Preparing failed={lastError} />
+      </>
+    );
+  }
+
+  const skipped = await skippedStoryIds(supabase, user.id, paper);
   return (
-    <main className="mx-auto w-full max-w-3xl px-6 py-12">
-      <h1 className="font-serif text-4xl font-bold">Your Morning Paper</h1>
-      <p className="mt-4 text-stone-600">Signed in as {profile.email} ({profile.timezone}).</p>
-      <form action={signOut} className="mt-8">
-        <button className="underline">Sign out</button>
-      </form>
-    </main>
+    <>
+      <SiteHeader email={profile.email} />
+      {missingToday && (
+        <div className="bg-stone-900 px-4 py-2 text-center text-sm text-white">
+          <AutoRefresh everyMs={6000} />
+          Today&apos;s edition is being prepared. Here&apos;s your latest paper meanwhile.
+        </div>
+      )}
+      {isBuilder(user.email) && <BuilderButton />}
+      <PaperView paper={paper} skipped={skipped} readerName={profile.display_name} />
+    </>
   );
 }

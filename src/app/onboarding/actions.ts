@@ -22,7 +22,11 @@ export async function completeOnboarding(_: OnboardingState, formData: FormData)
 
   // Google sign-ups don't pass through our sign-up form, so take the time zone here too.
   const tz = String(formData.get("timezone") ?? "");
-  const update: Record<string, unknown> = { onboarded: true, interests_note: note || null };
+  const update: Record<string, unknown> = {
+    onboarded: true,
+    interests_note: note || null,
+    baseline_interests: { picked, note: noteInterests },
+  };
   if (tz && profile.timezone === "UTC" && tz !== "UTC") update.timezone = tz;
   const { error } = await supabase.from("profiles").update(update).eq("id", user.id);
   if (error) return { error: error.message };

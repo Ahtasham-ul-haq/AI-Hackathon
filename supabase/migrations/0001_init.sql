@@ -11,6 +11,7 @@ create table public.profiles (
   timezone text not null default 'UTC',
   onboarded boolean not null default false,
   interests_note text,                       -- the one optional free-text sentence
+  baseline_interests jsonb,                  -- onboarding choices, for "reset" ({picked, note})
   region text,                               -- null = worldwide
   language text not null default 'en',
   preferred_sources text[] not null default '{}',
@@ -112,8 +113,9 @@ create table public.reading_events (
   kind text not null check (kind in ('open','skip','scroll_past')),
   created_at timestamptz not null default now()
 );
-create unique index reading_events_scroll_once
-  on public.reading_events (user_id, story_id) where kind = 'scroll_past';
+-- Each kind counts once per story (no farming weight by re-opening).
+create unique index reading_events_once
+  on public.reading_events (user_id, story_id, kind);
 
 -- Generation bookkeeping (claim = unique user + local date) -------------
 create table public.generation_runs (
@@ -146,6 +148,24 @@ end $$;
 create trigger on_auth_user_created
   after insert on auth.users
   for each row execute function public.handle_new_user();
+
+-- Atomic weight change for the signed-in reader (learning) ----------------
+-- Creates a 'learned' interest when a reader opens a story in a topic they
+-- never chose; negative signals never create new interests.
+create or replace function public.bump_weight(p_topic text, p_subtopic text, p_label text, p_delta real)
+returns void language plpgsql security invoker set search_path = public as $$
+begin
+  if auth.uid() is null then raise exception 'not signed in'; end if;
+  update public.interest_weights
+     set weight = greatest(-10, least(20, weight + p_delta)), updated_at = now()
+   where user_id = auth.uid() and topic = p_topic and lower(subtopic) = lower(p_subtopic);
+  if not found and p_delta > 0 then
+    insert into public.interest_weights (user_id, topic, subtopic, label, weight, initial_weight, source)
+    values (auth.uid(), p_topic, p_subtopic, p_label, p_delta, null, 'learned')
+    on conflict (user_id, topic, subtopic) do update
+      set weight = greatest(-10, least(20, interest_weights.weight + p_delta)), updated_at = now();
+  end if;
+end $$;
 
 -- Row level security: owner-only -----------------------------------------
 alter table public.profiles enable row level security;
