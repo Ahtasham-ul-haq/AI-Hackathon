@@ -77,7 +77,7 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
                 required
                 placeholder="reader@example.com"
                 autoComplete="email"
-                className="mt-1 w-full rounded-xs border border-stone-300 bg-[#fdfbf7] px-3.5 py-2.5 text-sm text-stone-900 transition focus:border-stone-900 focus:bg-white focus:outline-hidden"
+                className="mt-1 w-full rounded-sm border border-stone-300 bg-[#fdfbf7] px-3.5 py-2.5 text-sm text-stone-900 placeholder:text-stone-500 transition focus:border-stone-900 focus:bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-stone-900"
               />
             </div>
 
@@ -86,7 +86,7 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
                 <label htmlFor="password" className="block text-xs font-semibold uppercase tracking-wider text-stone-700">
                   Password
                 </label>
-                <span className="text-[11px] text-stone-400">At least 8 characters</span>
+                <span className="text-[11px] text-stone-500">At least 8 characters</span>
               </div>
               <input
                 id="password"
@@ -96,7 +96,7 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
                 placeholder="••••••••"
                 minLength={8}
                 autoComplete={mode === "signup" ? "new-password" : "current-password"}
-                className="mt-1 w-full rounded-xs border border-stone-300 bg-[#fdfbf7] px-3.5 py-2.5 text-sm text-stone-900 transition focus:border-stone-900 focus:bg-white focus:outline-hidden"
+                className="mt-1 w-full rounded-sm border border-stone-300 bg-[#fdfbf7] px-3.5 py-2.5 text-sm text-stone-900 placeholder:text-stone-500 transition focus:border-stone-900 focus:bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-stone-900"
               />
             </div>
 
@@ -179,7 +179,7 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
 
         {/* Footer Note */}
         <p className="mt-6 text-center text-xs text-stone-500">
-          NaSCon &apos;26 AI Hackathon · Powered by Gemini & Groq failover
+          A personal morning paper, free for every reader.
         </p>
       </div>
     </div>

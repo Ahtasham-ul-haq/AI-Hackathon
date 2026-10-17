@@ -9,14 +9,14 @@ export function SiteHeader({ email }: { email?: string | null }) {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
 
-  const links = [
+  const links = email ? [
     { href: "/paper", label: "Today" },
     { href: "/history", label: "Editions" },
     { href: "/saved", label: "Saved" },
-    { href: "/premium", label: "About" },
+    { href: "/premium", label: "The standard" },
     { href: "/learned", label: "Interests" },
     { href: "/settings", label: "Settings" },
-  ];
+  ] : [];
 
   function isActive(href: string) {
     return href === "/paper"
@@ -26,19 +26,19 @@ export function SiteHeader({ email }: { email?: string | null }) {
 
   return (
     <header className="sticky top-0 z-40 border-b border-stone-300 bg-[#faf8f3]/95 backdrop-blur-md print:hidden">
-      <div className="mx-auto flex min-h-16 w-full max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-8">
+      <div className="mx-auto flex min-h-[4.5rem] w-full max-w-[90rem] items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-8">
         {/* Brand */}
-        <Link href="/paper" className="group flex shrink-0 items-baseline gap-2.5 whitespace-nowrap">
-          <span className="font-serif text-2xl font-black tracking-[-0.06em] text-stone-900 group-hover:text-stone-700">
+        <Link href={email ? "/paper" : "/"} className="group flex shrink-0 items-baseline gap-2.5 whitespace-nowrap">
+          <span className="font-serif text-[1.7rem] font-black tracking-[-0.045em] text-stone-900 group-hover:text-stone-700">
             MARGINS
           </span>
-          <span className="hidden whitespace-nowrap border-l border-stone-300 pl-2.5 text-[9px] font-semibold uppercase tracking-[0.18em] text-stone-500 sm:inline-block">
-            Daily Edition
+          <span className="hidden whitespace-nowrap border-l border-stone-300 pl-2.5 text-[9px] font-semibold uppercase tracking-[0.16em] text-stone-500 sm:inline-block">
+            Morning paper
           </span>
         </Link>
 
         {/* Desktop Navigation */}
-        <nav aria-label="Main navigation" className="ml-auto hidden items-center gap-5 whitespace-nowrap text-[11px] font-semibold uppercase tracking-[0.11em] text-stone-600 lg:flex 2xl:gap-7">
+        <nav aria-label="Main navigation" className="ml-auto hidden items-center gap-4 whitespace-nowrap text-[10px] font-semibold uppercase tracking-[0.09em] text-stone-600 xl:flex 2xl:gap-6 2xl:text-[11px]">
           {links.map((link) => {
             const active = isActive(link.href);
             return (
@@ -57,7 +57,7 @@ export function SiteHeader({ email }: { email?: string | null }) {
             );
           })}
 
-          <form action={signOut} className="ml-1 border-l border-stone-300 pl-4">
+          {email ? <form action={signOut} className="ml-1 border-l border-stone-300 pl-4">
             <button
               type="submit"
               className="rounded border border-stone-300 px-3 py-2 text-[11px] font-semibold text-stone-600 transition hover:border-stone-500 hover:bg-white hover:text-stone-900"
@@ -65,11 +65,14 @@ export function SiteHeader({ email }: { email?: string | null }) {
             >
               Sign out
             </button>
-          </form>
+          </form> : <div className="ml-2 flex items-center gap-4 border-l border-stone-300 pl-4">
+            <Link href="/login" className="text-[10px] font-semibold uppercase tracking-[0.09em] text-stone-700 hover:text-stone-950">Sign in</Link>
+            <Link href="/signup" className="rounded-sm bg-stone-900 px-3.5 py-2 text-[10px] font-semibold uppercase tracking-[0.08em] text-white transition hover:bg-stone-700">Create your paper</Link>
+          </div>}
         </nav>
 
         {/* Mobile menu button */}
-        <div className="flex items-center gap-2 lg:hidden">
+        <div className={`flex items-center gap-2 xl:hidden ${email ? "" : "hidden"}`}>
           <button
             type="button"
             onClick={() => setMenuOpen((o) => !o)}
@@ -93,11 +96,15 @@ export function SiteHeader({ email }: { email?: string | null }) {
             </svg>
           </button>
         </div>
+        {!email && <div className="flex items-center gap-3 xl:hidden">
+          <Link href="/login" className="text-xs font-semibold text-stone-700 underline underline-offset-4 hover:text-stone-950">Sign in</Link>
+          <Link href="/signup" className="rounded-sm bg-stone-900 px-3 py-2 text-xs font-semibold text-white transition hover:bg-stone-700">Create paper</Link>
+        </div>}
       </div>
 
       {/* Mobile Drawer */}
-      {menuOpen && (
-        <div id="site-mobile-menu" className="border-t border-stone-200 bg-[#faf8f3] px-4 py-4 shadow-md lg:hidden sm:px-6">
+      {email && menuOpen && (
+        <div id="site-mobile-menu" className="border-t border-stone-200 bg-[#faf8f3] px-4 py-4 shadow-md xl:hidden sm:px-6">
           <nav aria-label="Main navigation" className="mx-auto flex max-w-7xl flex-col gap-1 text-xs font-semibold uppercase tracking-wider text-stone-700">
             {links.map((link) => {
               const active = isActive(link.href);

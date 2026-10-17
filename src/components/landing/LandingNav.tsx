@@ -21,7 +21,7 @@ export function LandingNav({ email }: { email?: string | null }) {
         </Link>
 
         {/* Desktop Section anchor links */}
-        <nav className="hidden items-center gap-7 text-xs font-medium uppercase tracking-wider text-stone-600 md:flex">
+        <nav aria-label="Landing page" className="hidden items-center gap-5 text-[11px] font-medium uppercase tracking-[0.08em] text-stone-600 xl:flex 2xl:gap-7">
           <a
             href="#how-it-works"
             className="transition hover:text-stone-950 hover:underline underline-offset-4"
@@ -29,28 +29,10 @@ export function LandingNav({ email }: { email?: string | null }) {
             How It Works
           </a>
           <a
-            href="#problem-solution"
-            className="transition hover:text-stone-950 hover:underline underline-offset-4"
-          >
-            The Philosophy
-          </a>
-          <a
             href="#edition-preview"
             className="transition hover:text-stone-950 hover:underline underline-offset-4"
           >
             Today&apos;s Edition
-          </a>
-          <a
-            href="#features"
-            className="transition hover:text-stone-950 hover:underline underline-offset-4"
-          >
-            Features
-          </a>
-          <a
-            href="#personalization"
-            className="transition hover:text-stone-950 hover:underline underline-offset-4"
-          >
-            Adaptive Weights
           </a>
         </nav>
 
@@ -95,7 +77,9 @@ export function LandingNav({ email }: { email?: string | null }) {
             type="button"
             onClick={() => setMobileMenuOpen((o) => !o)}
             aria-label="Toggle navigation menu"
-            className="ml-1 inline-flex items-center justify-center rounded p-1.5 text-stone-700 hover:bg-stone-200 md:hidden"
+            aria-expanded={mobileMenuOpen}
+            aria-controls="landing-mobile-menu"
+            className="ml-1 inline-flex items-center justify-center rounded border border-stone-300 p-2 text-stone-700 transition hover:bg-stone-200 focus-visible:outline-2 focus-visible:outline-offset-2 xl:hidden"
           >
             <svg
               className="h-5 w-5"
@@ -116,7 +100,7 @@ export function LandingNav({ email }: { email?: string | null }) {
 
       {/* Mobile Drawer Menu */}
       {mobileMenuOpen && (
-        <div className="border-t border-stone-200 bg-[#faf8f3] px-4 py-4 md:hidden animate-fade-in shadow-lg">
+        <div id="landing-mobile-menu" className="border-t border-stone-200 bg-[#faf8f3] px-4 py-4 xl:hidden animate-fade-in shadow-lg">
           <nav className="flex flex-col space-y-3 text-xs font-medium uppercase tracking-wider text-stone-700">
             <a
               href="#how-it-works"

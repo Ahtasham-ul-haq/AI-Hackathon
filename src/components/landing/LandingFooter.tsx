@@ -14,11 +14,10 @@ export function LandingFooter() {
               The Personal Morning Paper
             </p>
             <p className="text-sm leading-relaxed text-stone-600 max-w-sm">
-              An AI-edited daily newspaper tailored to individual curiosity. Grounded exclusively in verified
-              outlets, formatted for focused morning reading, and typeset into a print-ready edition.
+              A personal daily newspaper built from reporting across news outlets. Read focused briefings on the web or download a print-ready edition.
             </p>
             <div className="pt-2 text-xs text-stone-500">
-              Built for the <strong className="text-stone-800">NaSCon &apos;26 AI Hackathon</strong>.
+              Made for focused reading.
             </div>
           </div>
 
@@ -88,13 +87,13 @@ export function LandingFooter() {
 
           {/* Editorial Standards & Accuracy Note */}
           <div className="md:col-span-3 space-y-2">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-stone-900">Accuracy & Integrity</h4>
+            <h4 className="text-xs font-bold uppercase tracking-wider text-stone-900">Sources & summaries</h4>
             <p className="text-xs leading-relaxed text-stone-600">
-              Margins enforces strict verification rules: zero hallucinated quotes or unsupported assertions, visible AI attribution, dual-model failover redundancy, and direct links to primary reporting.
+              AI briefings are based on article headlines and snippets and may omit nuance. Each story links to its source reporting so you can read the full account.
             </p>
             <div className="pt-1">
-              <span className="inline-flex items-center gap-1.5 text-[11px] font-medium text-emerald-800">
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-600"></span> 22 RSS wires & GNews cached
+              <span className="inline-flex items-center gap-1.5 text-[11px] font-medium text-stone-700">
+                Source links accompany each briefing
               </span>
             </div>
           </div>
@@ -103,11 +102,6 @@ export function LandingFooter() {
         {/* Bottom Bar */}
         <div className="mt-10 border-t border-stone-300 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-stone-500">
           <p>© {new Date().getFullYear()} Margins · Personal Morning Paper. All rights reserved.</p>
-          <div className="flex items-center gap-4 text-xs">
-            <span>Local edition generation via Next.js App Router</span>
-            <span>·</span>
-            <span>Postgres with Row-Level Security</span>
-          </div>
         </div>
       </div>
     </footer>

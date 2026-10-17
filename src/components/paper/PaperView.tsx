@@ -26,11 +26,11 @@ export function PaperView({
       <header className="border-b-4 border-double border-stone-900 pb-4 text-center">
         {/* Top Kicker Bar */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-1 text-[10px] font-semibold uppercase tracking-[0.25em] text-stone-500">
-          <span>Morning Gazette</span>
+          <span>Personal daily edition</span>
           <span className="rounded bg-stone-100 px-2 py-0.5 text-stone-700">
             {readerName ? `Curated for ${readerName}` : "Your Personal Edition"}
           </span>
-          <span>Source-Linked Digest</span>
+          <span>Source-linked briefings</span>
         </div>
 
         {/* Master Logo */}
@@ -39,7 +39,7 @@ export function PaperView({
             MARGINS
           </h1>
           <p className="mt-0.5 font-serif italic text-xs text-stone-600 sm:text-sm">
-            &ldquo;Veritas et Tempus&rdquo; · Grounded news briefed by AI for one reader
+            A daily paper, edited around what matters to you
           </p>
         </div>
 

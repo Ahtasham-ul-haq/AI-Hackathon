@@ -132,7 +132,7 @@ export function StoryCard({ story, lead, skipped, initiallySaved = false }: { st
             {story.sources.map((s, i) => (
               <span key={s.id} className="inline-flex items-center gap-1">
                 <span className="font-medium text-stone-900">{s.source_name}</span>
-                <span className="text-stone-400">({shortDate(s.published_at)})</span>
+                <span className="text-stone-500">({shortDate(s.published_at)})</span>
                 <a
                   href={s.url}
                   target="_blank"
@@ -176,7 +176,7 @@ export function StoryCard({ story, lead, skipped, initiallySaved = false }: { st
         <button type="button" disabled={muting} onClick={muteStory} className="rounded px-2 py-0.5 text-[11px] text-stone-500 underline underline-offset-2 hover:text-rose-800 disabled:opacity-50" title="Hide this story and similar source links in future editions">{muting ? "Muting…" : "Mute story"}</button>
         <button
           type="button"
-          className="rounded px-2 py-0.5 text-[11px] text-stone-400 transition hover:bg-stone-200/80 hover:text-stone-800 cursor-pointer"
+          className="rounded px-2 py-0.5 text-[11px] text-stone-600 transition hover:bg-stone-200/80 hover:text-stone-900 cursor-pointer"
           title="Hide this story and decrease similar topics tomorrow"
           onClick={handleSkip}
         >

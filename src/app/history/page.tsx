@@ -4,6 +4,7 @@ import { formatPaperDate } from "@/lib/time";
 import { SiteHeader } from "@/components/SiteHeader";
 import { DatePicker } from "./DatePicker";
 import { PdfButton } from "@/components/paper/PdfButton";
+import { EditorialPageHeader } from "@/components/EditorialPageHeader";
 
 export default async function HistoryPage() {
   const { supabase, user, profile } = await requireReader();
@@ -24,19 +25,7 @@ export default async function HistoryPage() {
     <>
       <SiteHeader email={profile.email} />
       <main className="mx-auto w-full max-w-4xl px-4 py-10 sm:px-6 sm:py-14 animate-fade-in">
-        {/* Editorial Section Header */}
-        <div className="border-b-2 border-stone-900 pb-4">
-          <span className="text-xs font-semibold uppercase tracking-[0.25em] text-stone-500">
-            Chronicle Archive
-          </span>
-          <h1 className="mt-1 font-serif text-3xl font-black text-stone-950 sm:text-5xl">
-            Past Editions
-          </h1>
-          <p className="mt-2 text-sm leading-relaxed text-stone-600 sm:text-base">
-            Every edition compiled for you is preserved. Revisit previous days in the web reader or
-            retrieve your cached print-format PDFs.
-          </p>
-        </div>
+        <EditorialPageHeader title="Past editions" description="Revisit a previous day's paper in the web reader or download its print-ready edition." />
 
         {/* Date Filter & Search Box */}
         <div className="mt-8 rounded-xs border border-stone-300 bg-white p-4 sm:p-6 shadow-xs">
@@ -64,7 +53,7 @@ export default async function HistoryPage() {
                 className="group flex flex-wrap items-center justify-between gap-3 p-4 transition-colors hover:bg-stone-50 sm:p-5"
               >
                 <div className="flex items-center gap-3">
-                  <span className="font-mono text-xs text-stone-400 group-hover:text-stone-700">
+                  <span className="font-mono text-xs text-stone-500 group-hover:text-stone-700">
                     {p.local_date}
                   </span>
                   <Link

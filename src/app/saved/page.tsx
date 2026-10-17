@@ -3,6 +3,7 @@ import { requireReader } from "@/lib/auth";
 import { SiteHeader } from "@/components/SiteHeader";
 import { formatPaperDate } from "@/lib/time";
 import { RemoveSavedButton } from "@/components/paper/RemoveSavedButton";
+import { EditorialPageHeader } from "@/components/EditorialPageHeader";
 
 type SavedRow = {
   created_at: string;
@@ -18,11 +19,7 @@ export default async function SavedPage() {
   return <>
     <SiteHeader email={profile.email} />
     <main className="mx-auto w-full max-w-4xl px-4 py-10 sm:px-6 sm:py-14">
-      <div className="border-b-2 border-stone-900 pb-4">
-        <span className="text-xs font-semibold uppercase tracking-[0.25em] text-stone-500">Personal Library</span>
-        <h1 className="mt-1 font-serif text-3xl font-black text-stone-950 sm:text-5xl">Saved Stories</h1>
-        <p className="mt-2 text-sm text-stone-600">Stories you saved for another moment, kept across your devices.</p>
-      </div>
+      <EditorialPageHeader title="Saved stories" description="Keep a personal reading list and return to these briefings whenever you have time." />
       <ul className="mt-8 divide-y divide-stone-200 border-y border-stone-200 bg-white">
         {rows.map(({ stories: story }) => story && <li key={story.id} className="py-5">
           <p className="text-[11px] font-semibold uppercase tracking-wider text-stone-500">{formatPaperDate(story.papers.local_date)}</p>

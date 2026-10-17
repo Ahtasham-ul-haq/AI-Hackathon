@@ -23,7 +23,7 @@ export function OnboardingForm() {
     >
       <section>
         <div className="flex items-baseline justify-between">
-          <h2 className="font-serif text-lg font-bold text-stone-900">01. Select your beats</h2>
+          <h2 className="font-serif text-lg font-bold text-stone-900">Choose your topics</h2>
           <span className="text-xs text-stone-500">Tap card to expand subtopics</span>
         </div>
         <p className="mt-1 text-xs text-stone-600">
@@ -36,7 +36,7 @@ export function OnboardingForm() {
 
       <section className="border-t border-stone-200 pt-6">
         <label htmlFor="note" className="block font-serif text-lg font-bold text-stone-900">
-          02. Anything specific?{" "}
+          Anything specific?{" "}
           <span className="text-xs font-sans font-normal text-stone-500">(optional)</span>
         </label>
         <p className="mt-1 text-xs text-stone-600">
@@ -48,7 +48,7 @@ export function OnboardingForm() {
             name="note"
             maxLength={300}
             placeholder='e.g. "I follow Pakistani cricket, renewable energy grids, and open-source AI startups."'
-            className="w-full rounded-xs border border-stone-300 bg-[#fdfbf7] px-3.5 py-2.5 text-sm text-stone-900 transition focus:border-stone-900 focus:bg-white focus:outline-hidden"
+            className="w-full rounded-sm border border-stone-300 bg-[#fdfbf7] px-3.5 py-2.5 text-sm text-stone-900 placeholder:text-stone-500 transition focus:border-stone-900 focus:bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-stone-900"
           />
         </div>
       </section>
@@ -76,7 +76,7 @@ export function OnboardingForm() {
         </button>
 
         <span className="text-xs text-stone-500">
-          Your edition will compile immediately using verified news sources.
+          Your interests can be changed anytime in Settings.
         </span>
       </div>
     </form>

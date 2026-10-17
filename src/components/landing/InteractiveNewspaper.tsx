@@ -103,11 +103,11 @@ export function InteractiveNewspaper({
       {/* Newspaper Top Header / Masthead */}
       <div className="border-b-4 border-double border-stone-900 pb-4 text-center">
         <div className="flex flex-col items-center justify-between gap-1 sm:flex-row text-[10px] font-semibold uppercase tracking-[0.25em] text-stone-500">
-          <span>Vol. II · No. 290</span>
+          <span>Illustrative edition</span>
           <span className="rounded bg-stone-100 px-2.5 py-0.5 text-stone-700">
             Personalized Edition for {readerName}
           </span>
-          <span>Verified Multi-Source Digest</span>
+          <span>Source-linked briefings</span>
         </div>
 
         {/* Master Logo Banner */}
@@ -116,7 +116,7 @@ export function InteractiveNewspaper({
             MARGINS
           </h2>
           <p className="mt-0.5 text-xs font-serif italic text-stone-600 sm:text-sm">
-            &ldquo;Veritas et Tempus&rdquo; — Synthesized from 22 verified press wires & publications
+            One daily paper, built around your interests
           </p>
         </div>
 
@@ -125,8 +125,8 @@ export function InteractiveNewspaper({
           <span>{editionDate}</span>
           <div className="flex items-center gap-3">
             <span className="hidden sm:inline">4 Sections · 18 Briefings Curated</span>
-            <span className="inline-flex items-center gap-1 rounded bg-stone-900 px-2 py-0.5 text-[10px] text-white">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400"></span> Live Model Feed
+            <span className="inline-flex items-center gap-1 rounded bg-stone-200 px-2 py-0.5 text-[10px] text-stone-800">
+              Interactive preview
             </span>
           </div>
           <span className="font-mono text-[10px] text-stone-500">Local Timezone: Auto-Synchronized</span>
@@ -143,7 +143,7 @@ export function InteractiveNewspaper({
             Today&apos;s paper prioritizes energy infrastructure, AI accountability, and South Asian tech policy.
           </span>
         </div>
-        <div className="hidden shrink-0 items-center gap-1.5 font-mono text-[11px] text-stone-500 md:flex">
+        <div className="hidden shrink-0 items-center gap-1.5 font-mono text-[11px] text-stone-500 lg:flex">
           <span>Adaptive Interest Weight:</span>
           <span className="font-bold text-stone-900">{readWeight}</span>
         </div>
@@ -294,7 +294,7 @@ export function InteractiveNewspaper({
 
       {/* Footer disclaimer */}
       <div className="mt-8 border-t border-stone-400 pt-3 text-center text-[11px] text-stone-500">
-        Demo edition synthesized for interactive preview · Grounded solely in source articles with attribution
+        Illustrative sample content for preview. Headlines and details shown here are not live reporting.
       </div>
     </div>
   );

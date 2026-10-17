@@ -27,16 +27,11 @@ export default async function Home() {
 
       {/* 2. Hero Section: Masthead + Immediate Editorial Value Proposition */}
       <section className="relative overflow-hidden border-b border-stone-300 pt-8 pb-16 sm:pt-14 sm:pb-24">
-        {/* Subtle background newsprint rule lines */}
-        <div className="pointer-events-none absolute inset-0 opacity-[0.03] [background-image:linear-gradient(to_right,#000_1px,transparent_1px),linear-gradient(to_bottom,#000_1px,transparent_1px)] [background-size:2rem_2rem]" />
-
         <div className="relative mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-3xl text-center">
             {/* Hackathon badge & kicker */}
-            <div className="inline-flex items-center gap-2 border border-stone-400/80 bg-white/60 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.25em] text-stone-600 backdrop-blur-xs">
-              <span>NaSCon &apos;26 AI Hackathon</span>
-              <span>·</span>
-              <span className="text-stone-900 font-bold">Personal Daily Newspaper</span>
+            <div className="inline-flex items-center gap-2 border-y border-stone-400 px-3 py-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-stone-600">
+              <span>One thoughtful edition, every morning</span>
             </div>
 
             {/* Main Editorial Headline */}
@@ -45,26 +40,25 @@ export default async function Home() {
             </h1>
 
             {/* Supporting Copy */}
-            <p className="mt-5 text-lg leading-relaxed text-stone-700 sm:text-xl font-serif">
+            <p className="mx-auto mt-5 max-w-2xl text-lg leading-relaxed text-stone-700 sm:text-xl font-serif">
               Your interests. The world&apos;s stories. One personal newspaper, ready every morning.
             </p>
 
             <p className="mx-auto mt-3 max-w-2xl text-sm leading-relaxed text-stone-600 sm:text-base">
-              Margins gathers coverage from 20+ news outlets, groups multiple accounts of the same event,
-              synthesizes concise briefings from source snippets, and formats your edition for focused web reading and print-ready PDF download.
+              A personal daily edition built from reporting across news outlets, with concise briefings, clear source links, and a print-ready PDF.
             </p>
 
             {/* Call to Actions */}
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
               <Link
                 href="/signup"
-                className="inline-flex items-center justify-center rounded-xs bg-stone-900 px-7 py-3 text-sm font-semibold tracking-wide text-white shadow-md transition hover:bg-stone-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-stone-900"
+                className="inline-flex items-center justify-center rounded-sm bg-stone-900 px-7 py-3 text-sm font-semibold tracking-wide text-white transition hover:bg-stone-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-stone-900"
               >
                 Get your paper
               </Link>
               <a
                 href="#how-it-works"
-                className="inline-flex items-center justify-center rounded-xs border border-stone-400 bg-white/80 px-6 py-3 text-sm font-semibold text-stone-800 shadow-xs backdrop-blur-xs transition hover:bg-stone-100 hover:text-stone-950"
+                className="inline-flex items-center justify-center rounded-sm border border-stone-400 bg-transparent px-6 py-3 text-sm font-semibold text-stone-800 transition hover:bg-white hover:text-stone-950"
               >
                 See how it works ↓
               </a>
@@ -76,16 +70,12 @@ export default async function Home() {
               </Link>
             </div>
 
-            {/* Quick trust metrics */}
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-6 border-t border-stone-200 pt-5 text-xs text-stone-500">
-              <span className="flex items-center gap-1.5">
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-600"></span>
-                22 Verified RSS & News Outlets
-              </span>
-              <span className="hidden sm:inline">·</span>
-                <span>Source-grounded summaries</span>
-              <span className="hidden sm:inline">·</span>
-              <span>Daily Local Delivery</span>
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 border-t border-stone-200 pt-5 text-xs text-stone-600">
+              <span>Source links with every briefing</span>
+              <span aria-hidden="true" className="hidden text-stone-400 sm:inline">·</span>
+              <span>Personalized to your interests</span>
+              <span aria-hidden="true" className="hidden text-stone-400 sm:inline">·</span>
+              <span>Free for every reader</span>
             </div>
           </div>
 
@@ -93,7 +83,7 @@ export default async function Home() {
           <div className="mt-12 sm:mt-16">
             <div className="mx-auto max-w-5xl rounded-xs shadow-2xl ring-1 ring-stone-900/10">
               <div className="border-b border-stone-300 bg-stone-200/60 px-4 py-2 text-center text-[11px] font-semibold uppercase tracking-wider text-stone-600">
-                Interactive Edition Preview · Click headlines to read briefings or test skip interactions
+                An edition, at a glance
               </div>
               <InteractiveNewspaper />
             </div>
@@ -105,10 +95,7 @@ export default async function Home() {
       <section id="problem-solution" className="border-b border-stone-300 py-16 sm:py-24">
         <div className="mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-3xl text-center">
-            <p className="text-xs font-bold uppercase tracking-[0.25em] text-stone-500">
-              Editorial Philosophy
-            </p>
-            <h2 className="mt-2 font-serif text-3xl font-black text-stone-950 sm:text-5xl">
+            <h2 className="font-serif text-3xl font-bold leading-tight tracking-[-0.025em] text-stone-950 sm:text-5xl">
               The noise of everywhere versus the focus of one.
             </h2>
             <p className="mt-4 text-base leading-relaxed text-stone-600">
@@ -132,13 +119,13 @@ export default async function Home() {
                   The news is everywhere.
                 </h3>
                 <p className="mt-2 text-sm text-stone-600 leading-relaxed">
-                  Readers spend forty minutes jumping across disconnected apps, sifting through clickbait and sponsored feeds.
+                  Important coverage is scattered across apps, newsletters, and feeds that compete for your attention.
                 </p>
 
                 <ul className="mt-6 space-y-3.5 text-sm text-stone-700">
                   <li className="flex items-start gap-3">
                     <span className="text-rose-600 font-bold shrink-0">✕</span>
-                    <span><strong>15+ open tabs</strong> and duplicate notifications repeating the same developing events.</span>
+                    <span>Duplicate alerts and repeat coverage make it difficult to follow one developing story.</span>
                   </li>
                   <li className="flex items-start gap-3">
                     <span className="text-rose-600 font-bold shrink-0">✕</span>
@@ -150,7 +137,7 @@ export default async function Home() {
                   </li>
                   <li className="flex items-start gap-3">
                     <span className="text-rose-600 font-bold shrink-0">✕</span>
-                    <span><strong>Information amnesia:</strong> Finishing an hour of scrolling without recalling what actually mattered.</span>
+                    <span>Long reading sessions can make it harder to remember what actually mattered.</span>
                   </li>
                 </ul>
               </div>
@@ -210,14 +197,11 @@ export default async function Home() {
       <section id="how-it-works" className="border-b border-stone-300 bg-[#f7f5ed] py-16 sm:py-24">
         <div className="mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-3xl text-center">
-            <p className="text-xs font-bold uppercase tracking-[0.25em] text-stone-500">
-              The Reader Journey
-            </p>
-            <h2 className="mt-2 font-serif text-3xl font-black text-stone-950 sm:text-5xl">
+            <h2 className="font-serif text-3xl font-bold leading-tight tracking-[-0.025em] text-stone-950 sm:text-5xl">
               How Margins works in three steps.
             </h2>
             <p className="mt-4 text-base text-stone-600">
-              From onboarding to your morning routine in under two minutes.
+              Set your interests once, then refine the mix as you read.
             </p>
           </div>
 
@@ -275,7 +259,7 @@ export default async function Home() {
                 </div>
               </div>
               <p className="mt-3 text-xs text-stone-500">
-                First edition is compiled within 60 seconds of signing up.
+                Your first edition begins after you choose your interests.
               </p>
             </div>
 
@@ -320,20 +304,17 @@ export default async function Home() {
       <section id="features" className="border-b border-stone-300 py-16 sm:py-24">
         <div className="mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-3xl text-center">
-            <p className="text-xs font-bold uppercase tracking-[0.25em] text-stone-500">
-              Core Capabilities
-            </p>
-            <h2 className="mt-2 font-serif text-3xl font-black text-stone-950 sm:text-5xl">
-              Engineered with editorial craft.
+            <h2 className="font-serif text-3xl font-bold leading-tight tracking-[-0.025em] text-stone-950 sm:text-5xl">
+              A paper made for the way you read.
             </h2>
             <p className="mt-4 text-base text-stone-600">
               Designed around authentic newspaper mechanics rather than generic software templates.
             </p>
           </div>
 
-          <div className="mt-14 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-14 grid grid-cols-1 gap-x-12 md:grid-cols-2">
             {/* Feature 1 */}
-            <div className="rounded-xs border border-stone-300 bg-white p-6 transition hover:border-stone-400">
+            <div className="border-t border-stone-300 py-6">
               <div className="text-xs font-bold uppercase tracking-wider text-stone-500">Personalization</div>
               <h3 className="mt-2 font-serif text-xl font-bold text-stone-900">
                 A paper that knows your interests
@@ -347,7 +328,7 @@ export default async function Home() {
             </div>
 
             {/* Feature 2 */}
-            <div className="rounded-xs border border-stone-300 bg-white p-6 transition hover:border-stone-400">
+            <div className="border-t border-stone-300 py-6">
               <div className="text-xs font-bold uppercase tracking-wider text-stone-500">Consolidated Curation</div>
               <h3 className="mt-2 font-serif text-xl font-bold text-stone-900">
                 One place for the stories that matter
@@ -361,7 +342,7 @@ export default async function Home() {
             </div>
 
             {/* Feature 3 */}
-            <div className="rounded-xs border border-stone-300 bg-white p-6 transition hover:border-stone-400">
+            <div className="border-t border-stone-300 py-6">
               <div className="text-xs font-bold uppercase tracking-wider text-stone-500">Print Tradition</div>
               <h3 className="mt-2 font-serif text-xl font-bold text-stone-900">
                 Your newspaper, in print-ready form
@@ -375,7 +356,7 @@ export default async function Home() {
             </div>
 
             {/* Feature 4 */}
-            <div className="rounded-xs border border-stone-300 bg-white p-6 transition hover:border-stone-400">
+            <div className="border-t border-stone-300 py-6">
               <div className="text-xs font-bold uppercase tracking-wider text-stone-500">Edition Archive</div>
               <h3 className="mt-2 font-serif text-xl font-bold text-stone-900">
                 Your reading history preserved
@@ -389,7 +370,7 @@ export default async function Home() {
             </div>
 
             {/* Feature 5 */}
-            <div className="rounded-xs border border-stone-300 bg-white p-6 transition hover:border-stone-400">
+            <div className="border-t border-stone-300 py-6">
               <div className="text-xs font-bold uppercase tracking-wider text-stone-500">Editorial Integrity</div>
               <h3 className="mt-2 font-serif text-xl font-bold text-stone-900">
                 Less noise, more context
@@ -403,7 +384,7 @@ export default async function Home() {
             </div>
 
             {/* Feature 6 */}
-            <div className="rounded-xs border border-stone-300 bg-white p-6 transition hover:border-stone-400">
+            <div className="border-t border-stone-300 py-6">
               <div className="text-xs font-bold uppercase tracking-wider text-stone-500">Controlled Feedback</div>
               <h3 className="mt-2 font-serif text-xl font-bold text-stone-900">
                 Learning that improves your paper
@@ -423,14 +404,11 @@ export default async function Home() {
       <section id="edition-preview" className="border-b border-stone-300 bg-[#f4efe4] py-16 sm:py-24">
         <div className="mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-3xl text-center">
-            <p className="text-xs font-bold uppercase tracking-[0.25em] text-stone-500">
-              Authentic Typesetting
-            </p>
-            <h2 className="mt-2 font-serif text-3xl font-black text-stone-950 sm:text-5xl">
-              Experience the Morning Gazette
+            <h2 className="font-serif text-3xl font-bold leading-tight tracking-[-0.025em] text-stone-950 sm:text-5xl">
+              See your edition take shape
             </h2>
             <p className="mt-4 text-base text-stone-600">
-              Here is how Margins renders on your screen. Clear typography, balanced columns, linked sources, and no algorithmic clutter.
+              A closer look at the reading experience: concise briefings, clear source links, and room to focus.
             </p>
           </div>
 
@@ -453,10 +431,7 @@ export default async function Home() {
       <section id="personalization" className="border-b border-stone-300 py-16 sm:py-24">
         <div className="mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-3xl text-center">
-            <p className="text-xs font-bold uppercase tracking-[0.25em] text-stone-500">
-              Transparent Recommendation
-            </p>
-            <h2 className="mt-2 font-serif text-3xl font-black text-stone-950 sm:text-5xl">
+            <h2 className="font-serif text-3xl font-bold leading-tight tracking-[-0.025em] text-stone-950 sm:text-5xl">
               Personalization you can see and control.
             </h2>
             <p className="mt-4 text-base text-stone-600">
@@ -472,8 +447,7 @@ export default async function Home() {
 
       <section id="premium" className="border-b border-stone-300 bg-[#f7f5ed] py-16 sm:py-20">
         <div className="mx-auto max-w-4xl px-4 text-center sm:px-6">
-          <p className="text-xs font-bold uppercase tracking-[0.25em] text-stone-500">The Margins standard</p>
-          <h2 className="mt-2 font-serif text-3xl font-black text-stone-950 sm:text-5xl">A more considered way to read the news.</h2>
+          <h2 className="font-serif text-3xl font-bold leading-tight tracking-[-0.025em] text-stone-950 sm:text-5xl">A more considered way to read the news.</h2>
           <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-stone-600">Source context, transparent personalization, email delivery, listening, saved stories, and a print-ready edition are part of the same free product for everyone.</p>
           <Link href="/premium" className="mt-7 inline-flex rounded bg-stone-900 px-6 py-3 text-sm font-semibold text-white hover:bg-stone-700">Explore the Margins standard</Link>
         </div>
@@ -482,15 +456,12 @@ export default async function Home() {
       {/* 8. Section 8: Final CTA */}
       <section className="relative overflow-hidden bg-stone-900 py-20 text-white sm:py-28">
         <div className="relative mx-auto w-full max-w-4xl px-4 text-center sm:px-6 lg:px-8">
-          <p className="text-xs font-bold uppercase tracking-[0.3em] text-stone-400">
-            A Better Morning Ritual
-          </p>
-          <h2 className="mt-4 font-serif text-4xl font-black tracking-tight sm:text-6xl text-stone-50">
+          <h2 className="font-serif text-4xl font-bold leading-tight tracking-[-0.025em] text-stone-50 sm:text-6xl">
             Make room for the news that matters.
           </h2>
           <p className="mx-auto mt-6 max-w-2xl font-serif text-lg leading-relaxed text-stone-300 sm:text-xl">
             Start your day with a clearer view of the stories shaping your world. No feeds. No endless scroll.
-            Just your newspaper, delivered at sunrise.
+            One personal edition, ready when you are.
           </p>
 
           <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
@@ -508,9 +479,7 @@ export default async function Home() {
             </Link>
           </div>
 
-          <p className="mt-6 text-xs text-stone-500">
-            No credit card required · Ready within 60 seconds of onboarding · NaSCon &apos;26 Hackathon Edition
-          </p>
+          <p className="mt-6 text-xs text-stone-400">Free for every reader.</p>
         </div>
       </section>
 

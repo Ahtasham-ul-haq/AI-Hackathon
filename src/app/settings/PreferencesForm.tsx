@@ -17,7 +17,7 @@ type Prefs = {
 };
 
 const inputStyle =
-  "mt-1.5 w-full rounded-xs border border-stone-300 bg-[#fdfbf7] px-3.5 py-2.5 text-sm text-stone-900 transition focus:border-stone-900 focus:bg-white focus:outline-hidden";
+  "mt-1.5 w-full rounded-sm border border-stone-300 bg-[#fdfbf7] px-3.5 py-2.5 text-sm text-stone-900 placeholder:text-stone-500 transition focus:border-stone-900 focus:bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-stone-900";
 
 export function PreferencesForm({ prefs }: { prefs: Prefs }) {
   const [state, action, pending] = useActionState<SettingsState, FormData>(savePreferences, undefined);
@@ -53,7 +53,7 @@ export function PreferencesForm({ prefs }: { prefs: Prefs }) {
 
       <div>
         <label className="block text-xs font-semibold uppercase tracking-wider text-stone-700">
-          Preferred News Outlets <span className="font-normal text-stone-400 font-sans lowercase">(comma separated)</span>
+          Preferred News Outlets <span className="font-normal text-stone-500 font-sans lowercase">(comma separated)</span>
         </label>
         <input
           name="preferred"
@@ -65,7 +65,7 @@ export function PreferencesForm({ prefs }: { prefs: Prefs }) {
 
       <div>
         <label className="block text-xs font-semibold uppercase tracking-wider text-stone-700">
-          Outlets to Avoid <span className="font-normal text-stone-400 font-sans lowercase">(comma separated)</span>
+          Outlets to Avoid <span className="font-normal text-stone-500 font-sans lowercase">(comma separated)</span>
         </label>
         <input
           name="avoided"
@@ -106,7 +106,7 @@ export function PreferencesForm({ prefs }: { prefs: Prefs }) {
             {Array.from({ length: 24 }, (_, hour) => <option key={hour} value={hour}>{String(hour).padStart(2, "0")}:00</option>)}
           </select>
         </div>
-        <p className="mt-2 text-xs text-stone-500">Requires the deployment to configure Resend (RESEND_API_KEY and EMAIL_FROM). You can turn delivery off here at any time.</p>
+        <p className="mt-2 text-xs text-stone-500">You can turn delivery off here at any time.</p>
       </div>
 
       <div className="flex flex-col justify-end gap-3 sm:col-span-2 border-t border-stone-200 pt-4">

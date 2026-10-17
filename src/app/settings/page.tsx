@@ -5,6 +5,7 @@ import { TopicsForm } from "./TopicsForm";
 import { PreferencesForm } from "./PreferencesForm";
 import { toggleMutedTopic, unmuteArticle } from "./actions";
 import { TOPICS } from "@/lib/topics";
+import { EditorialPageHeader } from "@/components/EditorialPageHeader";
 
 export default async function SettingsPage() {
   const { supabase, user, profile } = await requireReader();
@@ -21,21 +22,10 @@ export default async function SettingsPage() {
     <>
       <SiteHeader email={profile.email} />
       <main className="mx-auto w-full max-w-4xl px-4 py-10 sm:px-6 sm:py-14 animate-fade-in">
-        {/* Editorial Section Header */}
-        <div className="border-b-2 border-stone-900 pb-4">
-          <span className="text-xs font-semibold uppercase tracking-[0.25em] text-stone-500">
-            Reader Configuration
-          </span>
-          <h1 className="mt-1 font-serif text-3xl font-black text-stone-950 sm:text-5xl">
-            Settings
-          </h1>
-          <p className="mt-2 text-sm leading-relaxed text-stone-600 sm:text-base">
-            Customize which beats Margins tracks and adjust issue length, regional scope, and source filters.
-          </p>
-        </div>
+        <EditorialPageHeader title="Settings" description="Choose the coverage, edition length, delivery time, and sources that shape your paper." />
 
         {/* Section 1: Topics */}
-        <section className="mt-10 rounded-xs border border-stone-300 bg-white p-6 sm:p-8 shadow-xs">
+        <section className="mt-10 border-t-2 border-stone-800 pt-5">
           <div className="border-b border-stone-200 pb-3">
             <h2 className="font-serif text-xl font-bold text-stone-900">Coverage Beats</h2>
             <p className="mt-1 text-xs text-stone-500">
@@ -48,7 +38,7 @@ export default async function SettingsPage() {
         </section>
 
         {/* Section 2: Preferences */}
-        <section className="mt-10 rounded-xs border border-stone-300 bg-white p-6 sm:p-8 shadow-xs">
+        <section className="mt-10 border-t-2 border-stone-800 pt-5">
           <div className="border-b border-stone-200 pb-3">
             <h2 className="font-serif text-xl font-bold text-stone-900">Edition Delivery & Sources</h2>
             <p className="mt-1 text-xs text-stone-500">
@@ -59,7 +49,7 @@ export default async function SettingsPage() {
             <PreferencesForm prefs={profile} />
           </div>
         </section>
-        <section className="mt-10 rounded-xs border border-stone-300 bg-white p-6 sm:p-8 shadow-xs">
+        <section className="mt-10 border-t-2 border-stone-800 pt-5">
           <div className="border-b border-stone-200 pb-3">
             <h2 className="font-serif text-xl font-bold text-stone-900">Muted topics</h2>
             <p className="mt-1 text-xs text-stone-500">Muted topics are excluded from future editions. You can restore them at any time.</p>
@@ -75,7 +65,7 @@ export default async function SettingsPage() {
             })}
           </div>
         </section>
-        <section className="mt-10 rounded-xs border border-stone-300 bg-white p-6 sm:p-8 shadow-xs">
+        <section className="mt-10 border-t-2 border-stone-800 pt-5">
           <div className="border-b border-stone-200 pb-3">
             <h2 className="font-serif text-xl font-bold text-stone-900">Muted stories</h2>
             <p className="mt-1 text-xs text-stone-500">Muted articles are excluded from future editions. Restore one here if you change your mind.</p>

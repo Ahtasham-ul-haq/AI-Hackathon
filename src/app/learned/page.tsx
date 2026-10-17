@@ -4,6 +4,7 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { AutoRefresh } from "@/components/paper/Preparing";
 import { SubmitButton } from "@/components/Loading";
 import { correctInterest, removeInterest, resetToOnboarding } from "./actions";
+import { EditorialPageHeader } from "@/components/EditorialPageHeader";
 
 type Row = {
   id: string;
@@ -54,40 +55,25 @@ export default async function LearnedPage() {
       <AutoRefresh everyMs={5000} />
 
       <main className="mx-auto w-full max-w-4xl px-4 py-10 sm:px-6 sm:py-14 animate-fade-in">
-        {/* Editorial Section Header */}
-        <div className="border-b-2 border-stone-900 pb-4">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-[0.25em] text-stone-500">
-              Transparent Personalization
-            </span>
-            <div className="flex items-center gap-2">
-              <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
-              <span className="text-xs text-stone-600 font-medium">Live Weight Tracking</span>
-            </div>
-          </div>
-
-          <h1 className="mt-1 font-serif text-3xl font-black text-stone-950 sm:text-5xl">
-            What We&apos;ve Learned About You
-          </h1>
-          <p className="mt-2 text-sm leading-relaxed text-stone-600 sm:text-base">
-            Opening a story strengthens its topics (+1.0); skipping weakens them (-1.0); scrolling past
-            weakens them slightly (-0.2). This ledger shows your active model weights in real time.
-          </p>
-        </div>
+        <EditorialPageHeader
+          title="What Margins has learned"
+          description="Your reading choices help shape future editions. Review the topics that matter to you and adjust them whenever your interests change."
+          aside={<span className="inline-flex items-center gap-2 text-xs font-medium text-stone-600"><span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-emerald-700" />Updates as you read</span>}
+        />
 
         {/* Signals Explainer Callout */}
         <div className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-3 text-xs">
-          <div className="rounded-xs border border-stone-300 bg-white p-3.5 shadow-xs">
-            <span className="font-serif font-bold text-emerald-800 text-sm">Open Story</span>
-            <p className="mt-1 text-stone-600">Adds <strong>+1.0</strong> to topic & subtopic weights immediately.</p>
+          <div className="border-t border-stone-300 py-3.5">
+            <span className="font-serif font-bold text-emerald-800 text-sm">Open a story</span>
+            <p className="mt-1 text-stone-600">Increases the weight of its topics for future editions.</p>
           </div>
-          <div className="rounded-xs border border-stone-300 bg-white p-3.5 shadow-xs">
-            <span className="font-serif font-bold text-rose-800 text-sm">Skip Story (✕)</span>
-            <p className="mt-1 text-stone-600">Subtracts <strong>-1.0</strong> and suppresses similar coverage.</p>
+          <div className="border-t border-stone-300 py-3.5">
+            <span className="font-serif font-bold text-rose-800 text-sm">Skip a story</span>
+            <p className="mt-1 text-stone-600">Reduces similar coverage in future editions.</p>
           </div>
-          <div className="rounded-xs border border-stone-300 bg-white p-3.5 shadow-xs">
-            <span className="font-serif font-bold text-stone-700 text-sm">Scroll Past</span>
-            <p className="mt-1 text-stone-600">Subtracts <strong>-0.2</strong> once per story when left unopened.</p>
+          <div className="border-t border-stone-300 py-3.5">
+            <span className="font-serif font-bold text-stone-700 text-sm">Read over time</span>
+            <p className="mt-1 text-stone-600">Your choices help Margins refine your topic mix.</p>
           </div>
         </div>
 
@@ -99,10 +85,7 @@ export default async function LearnedPage() {
         {/* Weights List */}
         <ul className="mt-8 flex flex-col gap-3.5">
           {rows.map((r) => (
-            <li
-              key={r.id}
-              className="rounded-xs border border-stone-300 bg-white p-4 sm:p-5 shadow-xs transition hover:border-stone-400"
-            >
+            <li key={r.id} className="border-t border-stone-300 py-4 sm:py-5">
               <div className="flex flex-wrap items-baseline justify-between gap-2">
                 <div className="flex items-center gap-2">
                   <span className="font-serif text-base font-bold text-stone-900 sm:text-lg">
@@ -167,7 +150,7 @@ export default async function LearnedPage() {
           ))}
 
           {!rows.length && (
-            <li className="rounded border border-stone-300 bg-white p-8 text-center text-sm text-stone-500">
+            <li className="border-y border-stone-300 bg-white/60 p-8 text-center text-sm text-stone-600">
               No interests recorded yet. Select topics in Settings to begin tailoring your paper.
             </li>
           )}
