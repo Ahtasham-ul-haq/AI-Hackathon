@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useState } from "react";
+import type { ComponentProps, ReactNode } from "react";
 import { Spinner } from "@/components/Loading";
 import { savePreferences, type SettingsState } from "./actions";
 import { LANGUAGES, REGIONS } from "@/lib/preferences";
@@ -19,6 +20,34 @@ type Prefs = {
 const inputStyle =
   "mt-1.5 w-full rounded-sm border border-stone-300 bg-[#fdfbf7] px-3.5 py-2.5 text-sm text-stone-900 placeholder:text-stone-500 transition focus:border-stone-900 focus:bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-stone-900";
 
+const selectStyle =
+  "block min-h-12 w-full appearance-none rounded-sm border border-stone-300 bg-[#fdfbf7] py-3 pl-4 pr-12 text-sm font-medium text-stone-900 transition-[border-color,background-color,box-shadow] duration-150 hover:border-stone-400 hover:bg-white focus:border-stone-900 focus:bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-stone-900 disabled:cursor-not-allowed disabled:opacity-60";
+const compactSelectStyle =
+  "block min-h-10 w-full appearance-none rounded-sm border border-stone-300 bg-[#fdfbf7] py-2 pl-3 pr-10 text-sm font-medium tabular-nums text-stone-900 transition-[border-color,background-color,box-shadow] duration-150 hover:border-stone-400 hover:bg-white focus:border-stone-900 focus:bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-stone-900 disabled:cursor-not-allowed disabled:opacity-60";
+
+function SelectControl({
+  children,
+  className = "",
+  compact = false,
+  ...props
+}: ComponentProps<"select"> & { children: ReactNode; compact?: boolean }) {
+  return (
+    <span className={`relative block ${className}`}>
+      <select {...props} className={compact ? compactSelectStyle : selectStyle}>
+        {children}
+      </select>
+      <span
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-y-0 right-0 flex w-11 items-center justify-center border-l border-stone-200 text-stone-600 transition-colors"
+      >
+        <svg viewBox="0 0 20 20" fill="none" className="h-4 w-4" stroke="currentColor" strokeWidth="1.7">
+          <path d="m5.5 7.5 4.5 4.5 4.5-4.5" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </span>
+    </span>
+  );
+}
+
 export function PreferencesForm({ prefs }: { prefs: Prefs }) {
   const [state, action, pending] = useActionState<SettingsState, FormData>(savePreferences, undefined);
   const [discoveryRatio, setDiscoveryRatio] = useState(prefs.discovery_ratio);
@@ -26,29 +55,29 @@ export function PreferencesForm({ prefs }: { prefs: Prefs }) {
   return (
     <form action={action} className="grid gap-5 sm:grid-cols-2">
       <div>
-        <label className="block text-xs font-semibold uppercase tracking-wider text-stone-700">
+        <label htmlFor="region" className="block text-xs font-semibold uppercase tracking-wider text-stone-700">
           Geographic Edition / Region
         </label>
-        <select name="region" defaultValue={prefs.region ?? ""} className={inputStyle}>
+        <SelectControl id="region" name="region" defaultValue={prefs.region ?? ""} className="mt-1.5">
           {REGIONS.map(([code, name]) => (
-            <option key={code} value={code}>
+            <option key={code} value={code} className="bg-white text-stone-900">
               {name}
             </option>
           ))}
-        </select>
+        </SelectControl>
       </div>
 
       <div>
-        <label className="block text-xs font-semibold uppercase tracking-wider text-stone-700">
+        <label htmlFor="language" className="block text-xs font-semibold uppercase tracking-wider text-stone-700">
           Publication Language
         </label>
-        <select name="language" defaultValue={prefs.language} className={inputStyle}>
+        <SelectControl id="language" name="language" defaultValue={prefs.language} className="mt-1.5">
           {LANGUAGES.map(([code, name]) => (
-            <option key={code} value={code}>
+            <option key={code} value={code} className="bg-white text-stone-900">
               {name}
             </option>
           ))}
-        </select>
+        </SelectControl>
       </div>
 
       <div>
@@ -76,14 +105,14 @@ export function PreferencesForm({ prefs }: { prefs: Prefs }) {
       </div>
 
       <div className="sm:col-span-2">
-        <label className="block text-xs font-semibold uppercase tracking-wider text-stone-700">
+        <label htmlFor="length" className="block text-xs font-semibold uppercase tracking-wider text-stone-700">
           Daily Issue Length
         </label>
-        <select name="length" defaultValue={prefs.length} className={inputStyle}>
-          <option value="short">Short Edition (10–12 briefings, ~5 min read)</option>
-          <option value="standard">Standard Edition (15–20 briefings, ~10 min read)</option>
-          <option value="long">Long Broadside (22–25 briefings, ~15 min read)</option>
-        </select>
+        <SelectControl id="length" name="length" defaultValue={prefs.length} className="mt-1.5">
+          <option value="short" className="bg-white text-stone-900">Short Edition (10–12 briefings, ~5 min read)</option>
+          <option value="standard" className="bg-white text-stone-900">Standard Edition (15–20 briefings, ~10 min read)</option>
+          <option value="long" className="bg-white text-stone-900">Long Broadside (22–25 briefings, ~15 min read)</option>
+        </SelectControl>
       </div>
 
       <div className="sm:col-span-2 rounded border border-stone-200 bg-stone-50 p-4">
@@ -100,15 +129,15 @@ export function PreferencesForm({ prefs }: { prefs: Prefs }) {
           <input type="checkbox" name="email_delivery" defaultChecked={prefs.email_delivery} className="accent-stone-900" />
           Email me the daily edition
         </label>
-        <div className="mt-3 flex items-center gap-3 text-xs text-stone-600">
-          <label htmlFor="delivery_hour">Preferred local delivery hour</label>
-          <select id="delivery_hour" name="delivery_hour" defaultValue={prefs.delivery_hour} className="rounded border border-stone-300 bg-white px-2 py-1">
+        <div className="mt-4 grid grid-cols-[1fr_auto] items-center gap-4 border-t border-stone-200 pt-3 text-xs text-stone-700">
+          <label htmlFor="delivery_hour" className="font-medium">Preferred local delivery hour</label>
+          <SelectControl id="delivery_hour" name="delivery_hour" defaultValue={prefs.delivery_hour} compact className="mt-0 w-36">
             {Array.from({ length: 24 }, (_, hour) => {
               const period = hour < 12 ? "AM" : "PM";
               const displayHour = hour % 12 || 12;
-              return <option key={hour} value={hour}>{displayHour}:00 {period}</option>;
+              return <option key={hour} value={hour} className="bg-white text-stone-900">{displayHour}:00 {period}</option>;
             })}
-          </select>
+          </SelectControl>
         </div>
         <p className="mt-2 text-xs text-stone-500">You can turn delivery off here at any time.</p>
       </div>

@@ -6,7 +6,7 @@ import { Spinner } from "@/components/Loading";
 import { signIn, signUp, type AuthState } from "@/app/auth/actions";
 import { createClient } from "@/lib/supabase/client";
 
-export function AuthForm({ mode, initialError }: { mode: "login" | "signup"; initialError?: string }) {
+export function AuthForm({ mode, initialError, initialMessage }: { mode: "login" | "signup"; initialError?: string; initialMessage?: string }) {
   const [state, action, pending] = useActionState<AuthState, FormData>(
     mode === "signup" ? signUp : signIn,
     undefined,
@@ -105,9 +105,9 @@ export function AuthForm({ mode, initialError }: { mode: "login" | "signup"; ini
                 {state?.error ?? initialError}
               </div>
             )}
-            {state?.message && (
+            {(state?.message ?? initialMessage) && (
               <div className="rounded-xs border border-emerald-300 bg-emerald-50 p-2.5 text-xs text-emerald-800">
-                {state.message}
+                {state?.message ?? initialMessage}
               </div>
             )}
 

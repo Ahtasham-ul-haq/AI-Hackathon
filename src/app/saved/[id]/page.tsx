@@ -47,7 +47,7 @@ export default async function SavedStoryPage({ params }: { params: Promise<{ id:
         </div>
         <div className="mt-6 flex flex-wrap items-center gap-3 print:hidden">
           <ListenButton text={`${story.headline}. ${story.briefing}`} language={profile.language} />
-          <RemoveSavedButton storyId={story.id} />
+          <RemoveSavedButton storyId={story.id} returnTo="/saved" />
         </div>
       </article>
       <Link href={`/paper/${paper.local_date}#${story.id}`} className="mt-5 inline-block text-sm font-semibold text-stone-700 underline underline-offset-4 hover:text-stone-950">View this story in the full edition →</Link>

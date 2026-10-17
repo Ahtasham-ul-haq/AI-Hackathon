@@ -4,6 +4,8 @@ import { revalidatePath } from "next/cache";
 import { requireReader } from "@/lib/auth";
 import { parsePicker, setChosenInterests } from "@/lib/interests";
 import { LANGUAGES, REGIONS } from "@/lib/preferences";
+import { createServiceClient } from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
 
 export type SettingsState = { error?: string; message?: string } | undefined;
 
@@ -90,4 +92,60 @@ export async function unmuteArticle(articleId: string) {
   const { supabase, user } = await requireReader();
   await supabase.from("muted_articles").delete().eq("user_id", user.id).eq("article_id", articleId);
   revalidatePath("/settings");
+}
+
+export async function deleteAccount(_: SettingsState, formData: FormData): Promise<SettingsState> {
+  const { supabase, user } = await requireReader();
+  if (formData.get("confirmation") !== "DELETE") {
+    return { error: "Type DELETE exactly to confirm account deletion." };
+  }
+
+  try {
+    const admin = createServiceClient();
+    const pdfPaths: string[] = [];
+    const pageSize = 100;
+    let offset = 0;
+
+    // Cached PDFs live outside Postgres cascades, so remove the reader's files first.
+    while (true) {
+      const { data, error } = await admin.storage
+        .from("papers")
+        .list(user.id, { limit: pageSize, offset, sortBy: { column: "name", order: "asc" } });
+      if (error) {
+        console.error("Account deletion could not list cached PDFs", error);
+        return { error: "We could not prepare your account for deletion. Please try again." };
+      }
+
+      const files = (data ?? []).filter((item) => item.id !== null);
+      pdfPaths.push(...files.map((item) => `${user.id}/${item.name}`));
+      if (!data || data.length < pageSize) break;
+      offset += pageSize;
+    }
+
+    for (let i = 0; i < pdfPaths.length; i += pageSize) {
+      const { error } = await admin.storage.from("papers").remove(pdfPaths.slice(i, i + pageSize));
+      if (error) {
+        console.error("Account deletion could not remove cached PDFs", error);
+        return { error: "We could not remove your saved editions. Please try again." };
+      }
+    }
+
+    const { error } = await admin.auth.admin.deleteUser(user.id);
+    if (error) {
+      console.error("Supabase account deletion failed", error);
+      return { error: "Your account could not be deleted. Please try again." };
+    }
+
+    try {
+      await supabase.auth.signOut();
+    } catch (error) {
+      // The user is already deleted; a stale browser session will be rejected on its next request.
+      console.warn("Could not clear the deleted account's local session", error);
+    }
+  } catch (error) {
+    console.error("Account deletion failed", error);
+    return { error: "Your account could not be deleted. Please try again." };
+  }
+
+  redirect("/login?deleted=1");
 }

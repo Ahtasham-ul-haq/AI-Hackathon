@@ -3,6 +3,7 @@ import { TOPIC_BY_SLUG } from "@/lib/topics";
 import { SiteHeader } from "@/components/SiteHeader";
 import { TopicsForm } from "./TopicsForm";
 import { PreferencesForm } from "./PreferencesForm";
+import { DeleteAccountForm } from "./DeleteAccountForm";
 import { toggleMutedTopic, unmuteArticle } from "./actions";
 import { TOPICS } from "@/lib/topics";
 import { EditorialPageHeader } from "@/components/EditorialPageHeader";
@@ -77,6 +78,15 @@ export default async function SettingsPage() {
             </li>)}
             {!mutedArticles.length && <li className="py-4 text-sm text-stone-500">You have not muted any stories.</li>}
           </ul>
+        </section>
+        <section className="mt-12 border-t-2 border-rose-800 pt-5">
+          <div className="border-b border-rose-200 pb-3">
+            <h2 className="font-serif text-xl font-bold text-rose-950">Delete account</h2>
+            <p className="mt-1 max-w-2xl text-sm leading-relaxed text-stone-700">
+              Permanently delete your account, editions, saved stories, reading history, preferences, and cached PDFs. This cannot be undone.
+            </p>
+          </div>
+          <DeleteAccountForm />
         </section>
       </main>
     </>
