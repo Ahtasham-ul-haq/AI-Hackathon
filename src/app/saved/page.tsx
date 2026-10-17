@@ -26,7 +26,7 @@ export default async function SavedPage() {
       <ul className="mt-8 divide-y divide-stone-200 border-y border-stone-200 bg-white">
         {rows.map(({ stories: story }) => story && <li key={story.id} className="py-5">
           <p className="text-[11px] font-semibold uppercase tracking-wider text-stone-500">{formatPaperDate(story.papers.local_date)}</p>
-          <Link href={`/paper/${story.papers.local_date}`} className="mt-1 block font-serif text-xl font-bold text-stone-900 hover:underline">{story.headline}</Link>
+          <Link href={`/saved/${story.id}`} className="mt-1 block font-serif text-xl font-bold text-stone-900 hover:underline">{story.headline}</Link>
           <p className="mt-2 text-sm leading-relaxed text-stone-600">{story.briefing}</p>
           <RemoveSavedButton storyId={story.id} />
         </li>)}

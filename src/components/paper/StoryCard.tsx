@@ -84,6 +84,7 @@ export function StoryCard({ story, lead, skipped, initiallySaved = false }: { st
 
   return (
     <article
+      id={story.id}
       ref={ref}
       className={`break-inside-avoid border-b border-stone-300 pb-6 transition-all duration-200 ${
         isSkipping ? "opacity-0 scale-98" : "opacity-100"
