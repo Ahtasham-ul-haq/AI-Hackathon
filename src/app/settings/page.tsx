@@ -2,6 +2,7 @@ import { requireReader } from "@/lib/auth";
 import { TOPIC_BY_SLUG } from "@/lib/topics";
 import { SiteHeader } from "@/components/SiteHeader";
 import { TopicsForm } from "./TopicsForm";
+import { PreferencesForm } from "./PreferencesForm";
 
 export default async function SettingsPage() {
   const { supabase, user, profile } = await requireReader();
@@ -23,6 +24,10 @@ export default async function SettingsPage() {
             Today&apos;s paper stays as it is; changes apply from tomorrow morning.
           </p>
           <TopicsForm topics={topics} subtopics={subtopics} />
+        </section>
+        <section className="mt-12 border-t border-stone-300 pt-8">
+          <h2 className="mb-4 text-lg font-semibold">Preferences</h2>
+          <PreferencesForm prefs={profile} />
         </section>
       </main>
     </>

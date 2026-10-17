@@ -7,6 +7,7 @@ import { createServiceClient } from "@/lib/supabase/server";
 import { TOPIC_BY_SLUG } from "@/lib/topics";
 import { addDays, localDate } from "@/lib/time";
 import type { Profile } from "@/lib/auth";
+import { LANGUAGE_NAME } from "@/lib/preferences";
 
 export type Trigger = "onboarding" | "hourly" | "visit" | "builder";
 
@@ -97,7 +98,7 @@ Topics (higher interest = more and more prominent coverage):
 ${topicLines || "- none"}
 Subtopics:
 ${subLines || "- none"}
-${profile.preferred_sources.length ? `Prefers outlets: ${profile.preferred_sources.join(", ")}\n` : ""}
+${profile.preferred_sources.length ? `Prefers outlets (favour them when they cover a story): ${profile.preferred_sources.join(", ")}\n` : ""}${profile.language !== "en" ? `Reads in ${LANGUAGE_NAME[profile.language] ?? profile.language}: write headlines and section names in that language and prefer articles in it.\n` : ""}
 CANDIDATE ARTICLES (id | topic | outlet | published | headline — snippet)
 ${articles}
 
@@ -182,7 +183,10 @@ Rules (strict):
 - If the snippets are thin, write a shorter briefing rather than filling gaps.
 - Plain, neutral newspaper English. 3-5 sentences.`;
 
-async function writeBriefings(stories: DraftStory[]): Promise<Provider | null> {
+async function writeBriefings(stories: DraftStory[], language: string): Promise<Provider | null> {
+  const system = language === "en" ? BRIEFING_RULES
+    : `${BRIEFING_RULES}
+- Write the briefing in ${LANGUAGE_NAME[language] ?? language}.`;
   const batches: DraftStory[][] = [];
   for (let i = 0; i < stories.length; i += 5) batches.push(stories.slice(i, i + 5));
   const providers = await Promise.all(
@@ -193,7 +197,7 @@ async function writeBriefings(stories: DraftStory[]): Promise<Provider | null> {
           s.articles.map((a) => `- ${a.source_name} (${a.published_at?.slice(0, 10) ?? "undated"}): ${a.title}. ${a.snippet ?? ""}`).join("\n"))
         .join("\n\n");
       try {
-        const { data, provider } = await generateJson({ system: BRIEFING_RULES, prompt, schema: BriefingSchema, temperature: 0.2 });
+        const { data, provider } = await generateJson({ system, prompt, schema: BriefingSchema, temperature: 0.2 });
         for (const b of data.briefings) {
           const s = batch[b.story];
           if (s && b.briefing.trim()) {
@@ -353,7 +357,7 @@ export async function generatePaperForReader(userId: string, trigger: Trigger): 
       const edited = await runEditor(profile, weights, candidates);
       sections = edited.sections;
       provider = edited.provider;
-      await writeBriefings(sections.flatMap((s) => s.stories));
+      await writeBriefings(sections.flatMap((s) => s.stories), profile.language);
     } catch (e) {
       console.error("editor failed, plain edition:", (e as Error).message);
       sections = plainEdition(weights, candidates, (LENGTH[profile.length] ?? LENGTH.standard)[1]);
