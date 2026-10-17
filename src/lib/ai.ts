@@ -44,6 +44,8 @@ async function callGemini<S extends z.ZodType>(req: JsonRequest<S>): Promise<z.i
         temperature: req.temperature ?? 0.3,
         responseMimeType: "application/json",
         responseJsonSchema: z.toJSONSchema(req.schema, { target: "draft-7" }),
+        // Flash models think by default; editing and briefing don't need it and it costs latency.
+        ...(GEMINI_MODEL.includes("flash") ? { thinkingConfig: { thinkingBudget: 0 } } : {}),
       },
     }),
   );

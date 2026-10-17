@@ -2,6 +2,9 @@ import { redirect } from "next/navigation";
 import { requireReader } from "@/lib/auth";
 import { OnboardingForm } from "./OnboardingForm";
 
+// The first paper is generated in after() from this page's server action.
+export const maxDuration = 300;
+
 export default async function OnboardingPage() {
   const { profile } = await requireReader();
   if (profile.onboarded) redirect("/paper");
